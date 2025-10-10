@@ -102,7 +102,7 @@ const ProductTable: React.FC<Props> = ({
               <td className="px-4 py-3 text-sm text-gray-600">
                 {item.description && "-"}
               </td>
-              <td className="px-4 py-3 text-sm text-gray-600">
+              <td className="px-4 py-3 text-sm text-gray-600 ">
                 {item.image ? (
                   <img
                     src={

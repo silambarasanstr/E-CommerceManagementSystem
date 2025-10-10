@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { AxiosError } from "axios";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import Label from "../component/ui/label";
 import Input from "../component/ui/input";
 import Button from "../component/ui/button";
 import { Mail, Lock, Loader2 } from "lucide-react";
 import { loginUser } from "../services/authService";
+import toast from "react-hot-toast";
 
 type LoginFormType = {
   email: string;
@@ -32,90 +34,99 @@ const Login = () => {
     setLoading(true);
 
     try {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       const data = await loginUser(formData);
       localStorage.setItem("token", data.token);
+      toast.success("Login successfully!", {
+        duration: 9000,
+      });
       navigate(from, { replace: true }); // redirect to attempted page
     } catch (err) {
-      console.error(err);
+      const error = err as AxiosError<{ message: string }>;
+      console.error(error);
+      toast.error(error.response?.data?.message || "Invalid email or password");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#0d61fd] flex items-center justify-center">
-      <div className="w-full max-w-md bg-white p-5 border border-[#e5e7eb] shadow">
-        <div className="flex flex-col items-center justify-center p-6">
-          <div className="text-2xl font-semibold">Sign In</div>
-          <div className="text-[#847062] mt-3">
-            Enter your credentials to access your account
-          </div>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <Label htmlFor="email" text="Email Address" />
-            <div className="relative">
-              <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                placeholder="Enter your email"
-                className="pl-10"
-                autoComplete="username"
-              />
+    <div>
+      <div className="min-h-screen bg-[#0d61fd] flex items-center justify-center">
+        <div className="w-full max-w-md bg-white p-5 border border-[#e5e7eb] shadow">
+          <div className="flex flex-col items-center justify-center p-6">
+            <div className="text-2xl font-semibold">Sign In</div>
+            <div className="text-[#847062] mt-3">
+              Enter your credentials to access your account
             </div>
           </div>
 
-          <div>
-            <Label htmlFor="password" text="Password" />
-            <div className="relative">
-              <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                placeholder="Enter your password"
-                className="pl-10"
-                autoComplete="current-password"
-              />
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <Label htmlFor="email" text="Email Address" />
+              <div className="relative">
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="Enter your email"
+                  className="pl-10"
+                  autoComplete="username"
+                />
+              </div>
             </div>
-          </div>
 
-          <Button
-            type="submit"
-            className="w-full text-white bg-[#0d61fd] px-2 py-2 flex justify-center items-center"
-            disabled={loading} // ✅ disables the button when loading is true
-          >
-            {loading && <Loader2 className="animate-spin mr-2 h-4 w-4" />}
-            {loading ? "Signing In..." : "Sign In"}
-          </Button>
-        </form>
+            <div>
+              <Label htmlFor="password" text="Password" />
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  placeholder="Enter your password"
+                  className="pl-10"
+                  autoComplete="current-password"
+                />
+              </div>
+            </div>
 
-        <div className="mt-6 text-center">
-          <p className="text-sm text-muted-foreground">
-            Don't have an account?{" "}
-            <Link
-              to="/register"
-              className="text-primary hover:text-primary/80 transition-colors font-medium"
+            <Button
+              type="submit"
+              className="w-full text-white bg-[#0d61fd] px-2 py-2 flex justify-center items-center"
+              disabled={loading || !formData.email || !formData.password} // 👈 extra check
             >
-              Create one here
-            </Link>
-          </p>
-        </div>
+              {loading && <Loader2 className="animate-spin mr-2 h-4 w-4" />}
+              {loading ? "Signing In..." : "Sign In"}
+            </Button>
+          </form>
 
-        <div className="mt-6 p-4 bg-[#f2ebe3] rounded-lg">
-          <p className="text-sm font-medium text-foreground mb-2">
-            Demo Credentials:
-          </p>
-          <p className="text-xs text-muted-foreground">
-            Email: admin@123.com
-            <br />
-            Password: Any password will work
-          </p>
+          <div className="mt-6 text-center">
+            <p className="text-sm text-muted-foreground">
+              Don't have an account?{" "}
+              <Link
+                to="/register"
+                className="text-primary hover:text-primary/80 transition-colors font-medium"
+              >
+                Create one here
+              </Link>
+            </p>
+          </div>
+
+          <div className="mt-6 p-4 bg-[#f2ebe3] rounded-lg">
+            <p className="text-sm font-medium text-foreground mb-2">
+              Demo Credentials:
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Email: test@example.com
+              <br />
+              Password: 123456
+            </p>
+          </div>
         </div>
       </div>
     </div>

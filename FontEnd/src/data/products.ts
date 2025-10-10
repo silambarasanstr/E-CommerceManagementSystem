@@ -1,9 +1,14 @@
 export type ProductType = {
-  _id: string;
+  _id: number;
   name: string;
   price: number;
-  category?: "mobiles" | "appliances"; // optional if backend doesn’t always send
+  category: string;
   description: string;
+  originalPrice?: number;
+  rating?: number;
+  reviews?: number;
+  inStock?: boolean;
+  image?: string;
 };
 
 export const categories = [

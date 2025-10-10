@@ -12,13 +12,18 @@ import Cart from "./pages/Cart";
 import Register from "./pages/Register";
 import AllCategory from "./pages/AllCategory";
 import Wishlist from "./pages/Wishlist";
-
+import Checkout from "./pages/Checkout";
+import OrderSuccess from "./pages/OrderSuccess";
+import Orders from "./pages/Orders";
+import OrderDetails from "./pages/OrderDetails";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
     <>
       <div>
         <ErrorBoundary>
+          <Toaster position="top-right" reverseOrder={false} />
           <Router>
             <Routes>
               <Route element={<Layout />}>
@@ -27,6 +32,14 @@ function App() {
                 <Route path="/category" element={<AllCategory />} />
                 <Route path="/product/:id" element={<Products />} />
                 <Route path="/wishlist" element={<Wishlist />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/orders" element={<Orders />} />
+                <Route path="/orders/:orderId" element={<OrderDetails />} />
+                <Route
+                  path="/order-success/:orderId"
+                  element={<OrderSuccess />}
+                />
+
                 <Route
                   path="/cart"
                   element={

@@ -1,19 +1,19 @@
 import { useMemo, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { getProduct } from "../services/productService";
-import { type ProductType } from "../data/products";
+import type { ProductType } from "../data/products";
 import ProductCategoryCard from "../component/ProductCategoryCard";
 
 const Category: React.FC = () => {
-  const { name } = useParams<{ name: string }>();
-  const [product, setProduct] = useState<ProductType[]>([]);
+  const params = useParams();
+  const categoryName = params.name || ""; // fallback if undefined
+  const [products, setProducts] = useState<ProductType[]>([]);
 
- 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const data = await getProduct();
-        setProduct(data);
+        setProducts(data);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -22,30 +22,29 @@ const Category: React.FC = () => {
     fetchProducts();
   }, []);
 
-  // Filter products by category name
+  // Filter products by category (or show all if no category given)
   const categoryProducts = useMemo(() => {
-    return product.filter((ele) => ele.category === name);
-  }, [name, product]);
+    if (!categoryName) return products;
+    return products.filter((p) => p.category === categoryName);
+  }, [categoryName, products]);
 
   return (
-    <div>
-      <div className="px-6 py-5">
-        {/* Heading */}
-        <h2 className="text-2xl font-semibold mb-6 capitalize">
-          {name || "Category"}
-        </h2>
+    <div className="px-6 py-5">
+      {/* Heading */}
+      <h2 className="text-2xl font-semibold mb-6 capitalize">
+        {categoryName || "All Products"}
+      </h2>
 
-        {/* Products Grid */}
-        {categoryProducts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-5">
-            {categoryProducts.map((product) => (
-              <ProductCategoryCard key={product._id} product={product} />
-            ))}
-          </div>
-        ) : (
-          <p className="text-gray-500">No products found in this category.</p>
-        )}
-      </div>
+      {/* Products Grid */}
+      {categoryProducts.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-5">
+          {categoryProducts.map((p) => (
+            <ProductCategoryCard key={p._id} product={p} />
+          ))}
+        </div>
+      ) : (
+        <p className="text-gray-500">No products found.</p>
+      )}
     </div>
   );
 };

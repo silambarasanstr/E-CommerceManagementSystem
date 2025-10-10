@@ -1,77 +1,73 @@
 import { useEffect, useState } from "react";
 import Banner from "../assets/banner.webp";
-import ProductCard from "../component/ProductCard";
+import Add1 from "../assets/add1.webp";
+import Add2 from "../assets/add2.webp";
+import Add3 from "../assets/add3.webp";
+import Poster from "../assets/poster.webp";
 import { getProduct } from "../services/productService";
 import { categories, type ProductType } from "../data/products";
-import Poster from "../assets/poster.webp";
+import ProductSection from "../component/ProductSection";
 
 const Home: React.FC = () => {
-  const [product, setProduct] = useState<ProductType[]>([]);
+  const [products, setProducts] = useState<ProductType[]>([]);
 
   useEffect(() => {
-    const fetchProduct = async () => {
+    const fetchProducts = async () => {
       try {
         const data = await getProduct();
-        setProduct(data);
+        setProducts(data);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
     };
-    fetchProduct();
+    fetchProducts();
   }, []);
 
   return (
-    <div className="space-y-3 px-3 py-3">
+    <div className="space-y-6 px-3 py-3">
+      {/* Banner */}
       <div>
-        <img src={Banner} className="w-full object-cover" alt="banner" />
+        <img
+          src={Banner}
+          className="w-full object-cover rounded-lg"
+          alt="banner"
+        />
       </div>
 
-      <section className="w-full rounded-md bg-white p-4 md:p-6 space-y-5">
-        <h2 className="text-xl md:text-1xl font-semibold bg-gray-100 p-2 ">
-          {categories.find((item) => item.id === "mobiles")?.name}
-        </h2>
+      {/* Mobiles Section */}
+      <ProductSection
+        categoryId="mobiles"
+        title={categories.find((c) => c.id === "mobiles")?.name || "Mobiles"}
+        products={products}
+        poster={Poster}
+      />
 
-        <div className="flex gap-5 items-start">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 flex-1">
-            {product.length === 0 ? (
-              <p className="text-center text-gray-500">No product available</p>
-            ) : (
-              product
+      {/* Ads Section */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-6">
+        {[Add1, Add2, Add3].map((ad, idx) => (
+          <div
+            key={idx}
+            className="relative group overflow-hidden rounded-lg cursor-pointer shadow-md hover:shadow-lg transition-shadow duration-300"
+          >
+            <img
+              src={ad}
+              alt={`ad ${idx + 1}`}
+              className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+        ))}
+      </div>
 
-                .filter((category) => category.category === "mobiles")
-                .slice(0, 5)
-                .map((item) => <ProductCard key={item._id} product={item} />)
-            )}
-          </div>
-
-          {/* Poster */}
-          <div className="hidden md:flex justify-center">
-            <img src={Poster} alt="poster" className="w-48 sm:w-60 md:w-52" />
-          </div>
-        </div>
-      </section>
-      <section className="w-full rounded-md bg-white p-4 md:p-6 space-y-5">
-        {/* Mobiles Section */}
-        <h2 className="text-xl md:text-1xl font-semibold  bg-gray-100 p-2">
-          {categories.find((item) => item.id === "appliances")?.name}
-        </h2>
-
-        <div className="flex gap-5 items-start">
-          {/* Poster */}
-          <div className="hidden md:flex justify-center">
-            <img src={Poster} alt="poster" className="w-48 sm:w-60 md:w-52" />
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 flex-1">
-            {product.length === 0 ? (
-              <p className="text-center text-gray-500">No product available</p>
-            ) : (
-              product
-                .filter((ele) => ele.category === "appliances")
-                .map((item) => <ProductCard key={item._id} product={item} />)
-            )}
-          </div>
-        </div>
-      </section>
+      {/* Appliances Section */}
+      <ProductSection
+        categoryId="appliances"
+        title={
+          categories.find((c) => c.id === "appliances")?.name || "Appliances"
+        }
+        products={products}
+        poster={Poster}
+        reverse
+      />
     </div>
   );
 };

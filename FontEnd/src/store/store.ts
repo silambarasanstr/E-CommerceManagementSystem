@@ -4,11 +4,14 @@ import wishlistSlice from "./slices/wishlistSlice";
 import cartSlice from "./slices/cartSlice";
 import authSlice from "./slices/authSlice";
 
+import ordersSlice from "./slices/ordersSlice";
+
 export const store = configureStore({
   reducer: {
     wishlist: wishlistSlice,
     cart: cartSlice,
     auth: authSlice,
+    orders: ordersSlice,
   },
 });
 

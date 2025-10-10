@@ -69,7 +69,7 @@ const Header = () => {
           <Link to="/wishlist" className="relative">
             <Heart className="w-5 h-5" />
             {wishlistItemCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+              <span className="absolute -top-2 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
                 {wishlistItemCount}
               </span>
             )}

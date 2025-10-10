@@ -2,15 +2,15 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 export type WishlistItem = {
-  id: string;
+  _id: number;
   name: string;
   price: number;
   originalPrice?: number;
-  image: string;
-  category: string;
-  rating: number;
-  reviews: number;
-  inStock: boolean;
+  image?: string;
+  category?: string;
+  rating?: number;
+  reviews?: number;
+  inStock?: boolean;
   dateAdded: string;
 };
 
@@ -19,10 +19,17 @@ export type WishlistState = {
   itemCount: number;
 };
 
-const initialState: WishlistState = {
-  items: [],
-  itemCount: 0,
+// 🔹 Load wishlist from localStorage when app starts
+const loadWishlist = (): WishlistState => {
+  try {
+    const data = localStorage.getItem("wishlist");
+    return data ? JSON.parse(data) : { items: [], itemCount: 0 };
+  } catch {
+    return { items: [], itemCount: 0 };
+  }
 };
+
+const initialState: WishlistState = loadWishlist();
 
 const wishlistSlice = createSlice({
   name: "wishlist",
@@ -30,23 +37,26 @@ const wishlistSlice = createSlice({
   reducers: {
     // ✅ Add item to wishlist
     addToWhislist: (state, action: PayloadAction<WishlistItem>) => {
-      const exists = state.items.find((item) => item.id === action.payload.id);
+      const exists = state.items.find((item) => item._id === action.payload._id);
       if (!exists) {
         state.items.push(action.payload);
-        state.itemCount += 1;
-        // state.itemCount = state.items.length;
+        state.itemCount = state.items.length;
+        localStorage.setItem("wishlist", JSON.stringify(state)); // persist
       }
     },
+
     // ✅ Remove a single item from wishlist
-    removeFromWishlist: (state, action: PayloadAction<string>) => {
-      state.items = state.items.filter((item) => item.id !== action.payload);
-      state.itemCount -= 1;
+    removeFromWishlist: (state, action: PayloadAction<number>) => {
+      state.items = state.items.filter((item) => item._id !== action.payload);
+      state.itemCount = state.items.length;
+      localStorage.setItem("wishlist", JSON.stringify(state)); // persist
     },
 
     // ✅ Clear the wishlist
     clearWishlist: (state) => {
       state.items = [];
       state.itemCount = 0;
+      localStorage.removeItem("wishlist"); // clear storage
     },
   },
 });

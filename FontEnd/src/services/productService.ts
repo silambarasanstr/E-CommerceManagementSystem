@@ -1,7 +1,7 @@
 import type { ProductType } from "../data/products";
 
-//const API_URL = "https://e-commercemanagementsystem.onrender.com/api/products";
-const API_URL = "http://localhost:4000/api/products";
+const API_URL = "https://e-commercemanagementsystem.onrender.com/api/products";
+//const API_URL = "http://localhost:4000/api/products";
 
 // Get all products
 export const getProduct = async (): Promise<ProductType[]> => {

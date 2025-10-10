@@ -1,4 +1,4 @@
-import { Heart, ShoppingCart, Star, Trash2 } from "lucide-react";
+import { ShoppingCart, Star, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Button from "../component/ui/button";
 

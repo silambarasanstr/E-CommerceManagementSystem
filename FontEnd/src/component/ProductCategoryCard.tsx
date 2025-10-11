@@ -6,6 +6,9 @@ type ProductCardProps = {
   product: ProductType;
 };
 
+// Use Vite environment variable
+const baseUrl = import.meta.env.VITE_API_URL;
+
 const ProductCategoryCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
     <Link to={`/product/${product._id}`}>
@@ -13,15 +16,15 @@ const ProductCategoryCard: React.FC<ProductCardProps> = ({ product }) => {
         <div className="flex flex-col sm:flex-row sm:space-x-4 flex-1">
           {/* Image */}
           <div className="flex-shrink-0 flex justify-center sm:justify-start border border-gray-200 p-5">
-            {product?.image ? (
+            {product.image ? (
               <img
                 src={
                   product.image.startsWith("http")
                     ? product.image
-                    : `http://localhost:4000${product.image}`
+                    : `${baseUrl}${product.image}` // ✅ use baseUrl from env
                 }
                 alt={product.name}
-                className="mb-4 w-[152px]  h-[152px] object-contain"
+                className="mb-4  w-[152px] h-[152px] object-contain "
               />
             ) : (
               <span>No Image</span>

@@ -12,6 +12,9 @@ import {
 } from "../store/slices/cartSlice";
 import { useCallback, useEffect } from "react";
 
+// Use Vite environment variable
+const baseUrl = import.meta.env.VITE_API_URL;
+
 const Cart: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -99,12 +102,14 @@ const Cart: React.FC = () => {
               {items.map((item) => (
                 <div className="space-y-4">
                   <div className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg">
+                   
+
                     {item?.image ? (
                       <img
                         src={
                           item.image.startsWith("http")
                             ? item.image
-                            : `http://localhost:4000${item.image}`
+                           : `${baseUrl}${item.image}`
                         }
                         alt={item.name}
                         className="mb-4  p-3 w-20 h-20  rounded-md object-contain border border-gray-200 "
@@ -112,6 +117,8 @@ const Cart: React.FC = () => {
                     ) : (
                       <span>No Image</span>
                     )}
+
+                           
 
                     <div className="flex-1">
                       <Link
@@ -202,7 +209,6 @@ const Cart: React.FC = () => {
                 </div>
               </div>
 
-             
               <Button
                 onClick={() => navigate("/checkout")}
                 className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 text-lg rounded-md"

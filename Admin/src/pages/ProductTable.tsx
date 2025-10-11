@@ -14,6 +14,9 @@ type Props = {
   onMultiSelect: () => void;
 };
 
+// Use Vite environment variable
+const baseUrl = import.meta.env.VITE_API_URL;
+
 const ProductTable: React.FC<Props> = ({
   products,
   onAdd,
@@ -108,7 +111,7 @@ const ProductTable: React.FC<Props> = ({
                     src={
                       item.image.startsWith("http")
                         ? item.image
-                        : `http://localhost:4000${item.image}`
+                        : `${baseUrl}${item.image}`
                     }
                     alt={item.name}
                     className="w-8 h-8 object-cover"
@@ -117,6 +120,21 @@ const ProductTable: React.FC<Props> = ({
                   <span>No Image</span>
                 )}
               </td>
+              {/* <td className="px-4 py-3 text-sm text-gray-600 ">
+                {item.image ? (
+                  <img
+                    src={
+                      item.image.startsWith("http")
+                        ? item.image
+                        : `http://localhost:4000${item.image}`
+                    }
+                    alt={item.name}
+                    className="w-8 h-8 object-cover"
+                  />
+                ) : (
+                  <span>No Image</span>
+                )}
+              </td> */}
               <td className="px-4 py-3 text-sm text-gray-600">
                 {item.originalPrice}
               </td>

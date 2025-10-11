@@ -29,6 +29,7 @@ const ProductSection: React.FC<ProductSectionProps> = ({
         {poster && (
           <div className="hidden md:flex justify-center">
             <img src={poster} alt="poster" className="w-48 sm:w-60 md:w-52" />
+            
           </div>
         )}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 flex-1">

@@ -8,6 +8,9 @@ import { useAppDispatch } from "../store/hooks";
 import { addToCart } from "../store/slices/cartSlice";
 import WishlistButton from "../component/WishlistButton";
 
+// Use Vite environment variable
+const baseUrl = import.meta.env.VITE_API_URL;
+
 const Products: React.FC = () => {
   const { id } = useParams<{ id?: string }>();
   const dispatch = useAppDispatch();
@@ -48,19 +51,20 @@ const Products: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         {/* Product Image */}
         <div className="relative">
-          {product.image ? (
-            <img
-              src={
-                product.image.startsWith("http")
-                  ? product.image
-                  : `http://localhost:4000${product.image}`
-              }
-              alt={product.name}
-              className="mb-4 w-full p-3 max-h-[400px] object-contain border border-gray-200"
-            />
-          ) : (
-            <span>No Image</span>
-          )}
+          
+           {product.image ? (
+          <img
+            src={
+              product.image.startsWith("http")
+                ? product.image
+                : `${baseUrl}${product.image}` // ✅ use baseUrl from env
+            }
+            alt={product.name}
+            className="mb-4 w-full p-3 max-h-[400px] object-contain border border-gray-200"
+          />
+        ) : (
+          <span>No Image</span>
+        )}
         </div>
 
         {/* Product Details */}

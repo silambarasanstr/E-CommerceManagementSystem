@@ -12,6 +12,7 @@ const navItems = [
   { id: "mobile", label: "Mobile", href: "/category/mobiles", img: Mobi },
   { id: "home-appliances-1", label: "Home Appliances", href: "/category/appliances", img: HomeApp },
   { id: "category", label: "Category", href: "/category", img: fash },
+  { id: "product", label: "Product", href: "/product", img: fash },
   { id: "surfing", label: "Surfing", href: "/", img: Surf },
   { id: "chairs", label: "Chairs", href: "/", img: Chair },
   { id: "home-appliances-2", label: "Home Appliances", href: "/", img: Elct },

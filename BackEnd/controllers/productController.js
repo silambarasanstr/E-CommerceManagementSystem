@@ -1,133 +1,151 @@
-const Product = require("../models/product");
+import Product from "../models/Product.js";
 
 // 🔍 Search products by name or category
-exports.searchProduct = async (req, res) => {
-  try {
-    const { name, category } = req.query;
+// exports.searchProduct = async (req, res) => {
+//   try {
+//     const { name, category } = req.query;
 
-    // Build search filter
-    let filter = {};
+//     // Build search filter
+//     let filter = {};
 
-    if (name) {
-      // Case-insensitive partial search
-      filter.name = { $regex: name, $options: "i" };
-    }
+//     if (name) {
+//       // Case-insensitive partial search
+//       filter.name = { $regex: name, $options: "i" };
+//     }
 
-    if (category) {
-      filter.category = { $regex: category, $options: "i" };
-    }
+//     if (category) {
+//       filter.category = { $regex: category, $options: "i" };
+//     }
 
-    const products = await Product.find(filter);
+//     const products = await Product.find(filter);
 
-    res.json(products);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
+//     res.json(products);
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// };
 
 // Get all Product
 
-exports.getProduct = async (req, res) => {
+export const getProducts = async (req, res) => {
   try {
-    const product = await Product.find();
-    res.json(product);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const products = await Product.find()
+      .populate("category")
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      count: products.length,
+      data: products,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
   }
 };
 
 // Create a new Product
 
-exports.createProduct = async (req, res) => {
+export const createProduct = async (req, res) => {
   try {
-    const {
-      name,
-      price,
-      originalPrice,
-      category,
-      description,
-      rating,
-      reviews,
-      inStock,
-    } = req.body;
+    let image = "";
 
-    const product = new Product({
-      name,
-      price,
-      originalPrice,
-      category,
-      description,
-      rating,
-      reviews,
-      inStock,
-      image: req.file ? `/uploads/${req.file.filename}` : null, // fixed template literal
+    // File Upload
+    if (req.file) {
+      image = `/uploads/${req.file.filename}`;
+    }
+
+    // URL
+    if (req.body.image) {
+      image = req.body.image;
+    }
+
+    const product = await Product.create({
+      name: req.body.name,
+      description: req.body.description,
+      price: req.body.price,
+      originalPrice: req.body.originalPrice,
+      category: req.body.category,
+      image,
+      rating: req.body.rating,
+      reviews: req.body.reviews,
+      inStock: req.body.inStock,
     });
 
-    await product.save();
     res.status(201).json(product);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
   }
 };
 
 // Update product (with optional image)
-exports.updateProduct = async (req, res) => {
+export const updateProduct = async (req, res) => {
   try {
-    const {
-      name,
-      price,
-      originalPrice,
-      category,
-      description,
-      rating,
-      reviews,
-      inStock,
-    } = req.body;
-
-    const product = await Product.findById(req.params.id);
-    if (!product) {
-      return res.status(404).json({ message: "Product not found" });
-    }
-
-    // Update fields if provided
-    product.name = name || product.name;
-    product.price = price || product.price;
-    product.originalPrice = originalPrice || product.originalPrice;
-    product.category = category || product.category;
-    product.description = description || product.description;
-    product.rating = rating || product.rating;
-    product.reviews = reviews || product.reviews;
-    product.inStock = inStock || product.inStock;
+    let updateData = { ...req.body };
 
     if (req.file) {
-      product.image = `/uploads/${req.file.filename}`;
+      updateData.image = `/uploads/${req.file.filename}`;
     }
 
-    await product.save();
-    res.json(product);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
+    if (req.body.imageUrl) {
+      updateData.image = req.body.imageUrl;
+    }
+
+    const product = await Product.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      {
+        new: true,
+      }
+    );
+
+    res.json({
+      success: true,
+      data: product,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
   }
 };
 
 // Delete a Product
 
-exports.deleteProduct = async (req, res) => {
+export const deleteProduct = async (req, res) => {
   try {
     await Product.findByIdAndDelete(req.params.id);
-    res.json({ message: "Product deleted" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+
+    res.json({
+      success: true,
+      message: "Product deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
   }
 };
 
 // Get a single Product
-exports.getProductById = async (req, res) => {
+export const getProductById = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
-    if (!product) return res.status(404).json({ message: "Product not found" });
+    const product = await Product.findById(req.params.id)
+      .populate("category");
+
+    if (!product) {
+      return res.status(404).json({
+        message: "Product not found",
+      });
+    }
+
     res.json(product);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
   }
 };

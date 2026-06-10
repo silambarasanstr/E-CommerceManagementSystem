@@ -1,23 +1,18 @@
-// Sidebar.tsx
 import SideBarItem from "./SideBarItem";
 
-const SideItems = [
+const sideItems = [
   { label: "Dashboard", href: "/dashboard" },
   { label: "Products", href: "/products" },
-  { label: "Orders", href: "/orders" },
-  { label: "Inventory", href: "/inventory" },
-  { label: "Customers", href: "/customers" },
-  { label: "Analytics", href: "/analytics" },
 ];
 
 type SidebarProps = {
   onClick?: () => void;
 };
 
-const Sidebar = ({ onClick }: SidebarProps) => {
+const Sidebar: React.FC<SidebarProps> = ({ onClick }) => {
   return (
     <div>
-      <SideBarItem items={SideItems} onClick={onClick} />
+      <SideBarItem items={sideItems} onClick={onClick} />
     </div>
   );
 };

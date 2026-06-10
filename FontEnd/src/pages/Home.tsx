@@ -4,17 +4,18 @@ import Add1 from "../assets/add1.webp";
 import Add2 from "../assets/add2.webp";
 import Add3 from "../assets/add3.webp";
 import Poster from "../assets/poster.webp";
-import { getProduct } from "../services/productService";
+import { getProducts } from "../services/productService";
+import type { Product } from "../types/product";
 import { categories, type ProductType } from "../data/products";
 import ProductSection from "../component/ProductSection";
 
 const Home: React.FC = () => {
-  const [products, setProducts] = useState<ProductType[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await getProduct();
+        const data = await getProducts();
         setProducts(data);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -24,50 +25,47 @@ const Home: React.FC = () => {
   }, []);
 
   return (
-    <div className="space-y-6 px-3 py-3">
+    <div className="px-3 py-3 space-y-6">
       {/* Banner */}
       <div>
         <img
           src={Banner}
-          className="w-full object-cover rounded-lg"
+          className="object-cover w-full rounded-lg"
           alt="banner"
         />
       </div>
 
       {/* Mobiles Section */}
-      <ProductSection
+      {/* <ProductSection
         categoryId="mobiles"
         title={categories.find((c) => c.id === "mobiles")?.name || "Mobiles"}
         products={products}
         poster={Poster}
-      />
+      /> */}
 
-      {/* Ads Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-6">
+      <div className="grid grid-cols-1 gap-4 my-6 sm:grid-cols-2 md:grid-cols-3">
         {[Add1, Add2, Add3].map((ad, idx) => (
           <div
             key={idx}
-            className="relative group overflow-hidden rounded-lg cursor-pointer shadow-md hover:shadow-lg transition-shadow duration-300"
+            className="relative overflow-hidden transition-shadow duration-300 rounded-lg shadow-md cursor-pointer group hover:shadow-lg"
           >
             <img
               src={ad}
               alt={`ad ${idx + 1}`}
-              className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+              className="object-cover w-full h-48 transition-transform duration-300 group-hover:scale-105"
             />
           </div>
         ))}
       </div>
 
-      {/* Appliances Section */}
-      <ProductSection
-        categoryId="appliances"
-        title={
-          categories.find((c) => c.id === "appliances")?.name || "Appliances"
-        }
-        products={products}
+      {/* <ProductSection
+        // title={
+        //   categories.find((c) => c.id === "appliances")?.name || "Appliances"
+        // }
+         products={products}
         poster={Poster}
-        reverse
-      />
+        // reverse
+      /> */}
     </div>
   );
 };

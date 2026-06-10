@@ -67,19 +67,19 @@ const Login = () => {
           </div>
 
           {/* Submit Button */}
-          <Button type="submit" className="w-full text-white  px-2 py-2">
+          <Button type="submit" className="w-full px-2 py-2 text-white">
             Sign In
           </Button>
         </form>
 
         <div className="mt-6 p-4 bg-[#f5f6fa] rounded-lg">
-          <p className="text-sm font-medium text-foreground mb-2">
+          <p className="mb-2 text-sm font-medium text-foreground">
             Demo Credentials:
           </p>
           <p className="text-xs text-muted-foreground">
-            Email: admin@123.com
+            Email: admin@example.com
             <br />
-            Password: Any password will work
+            Password: 12345
           </p>
         </div>
       </div>

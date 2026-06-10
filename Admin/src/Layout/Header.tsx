@@ -5,21 +5,32 @@ import Button from "../component/ui/button";
 const Header = () => {
   const navigate = useNavigate();
 
+  const token = localStorage.getItem("token");
+
   const handleLogout = () => {
-    localStorage.removeItem("token"); // remove token
-    navigate("/login"); // redirect to login
+    localStorage.removeItem("token");
+    navigate("/login", { replace: true });
   };
 
   return (
-    <div className="flex justify-end items-center gap-3 py-5">
-      <Link to="/login" className="font-semibold flex items-center gap-2">
-        <User className="w-4 h-4" />
-        Sign In
-      </Link>
-      <Button onClick={handleLogout} className="font-semibold cursor-pointer">
-        Logout
-      </Button>
-    </div>
+    <header className="flex items-center justify-end gap-3 px-10 py-5">
+      {token ? (
+        <Button
+          onClick={handleLogout}
+          className="font-semibold cursor-pointer"
+        >
+          Logout
+        </Button>
+      ) : (
+        <Link
+          to="/login"
+          className="flex items-center gap-2 font-semibold"
+        >
+          <User className="w-4 h-4" />
+          Sign In
+        </Link>
+      )}
+    </header>
   );
 };
 

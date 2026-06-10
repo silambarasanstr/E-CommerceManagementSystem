@@ -1,64 +1,73 @@
 import { Outlet } from "react-router-dom";
+import { useState } from "react";
 
 import Sidebar from "../component/Sidebar/SideBar";
-import { useState } from "react";
 import Header from "./Header";
 
 const Layout = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  // login page-க்கு header/footer hide
+  const appTitle = "Mobile Product Management System";
 
   return (
-    <div className="min-h-screen flex bg-[#f5f6fa] ">
+    <div className="flex min-h-screen bg-[#f5f6fa]">
       {/* Desktop Sidebar */}
-      <aside className="w-64  h-full hidden md:flex flex-col border-r  border-gray-200">
+      <aside className="hidden md:flex md:w-64 md:flex-col border-r border-gray-200 bg-white">
         <div className="p-4 border-b border-gray-200">
-          <h1 className="text-1xl font-bold text-gray-800">
-            Mobiles Product Management System
+          <h1 className="text-lg font-bold text-gray-800">
+            {appTitle}
           </h1>
         </div>
+
         <div className="flex-1 overflow-y-auto">
-          <Sidebar onClick={() => setIsOpen(false)} />
+          <Sidebar />
         </div>
       </aside>
 
-      {/* Mobile Sidebar and Content */}
-      <div className="flex-1 flex flex-col">
+      {/* Main Content */}
+      <div className="flex flex-1 flex-col">
         {/* Mobile Navbar */}
-        <div className="md:hidden flex items-center justify-between bg-white p-4 shadow-md">
-          <h1 className="text-xl font-bold text-gray-800">
-            E-Commerce Management System
+        <div className="flex items-center justify-between p-4 bg-white shadow-md md:hidden">
+          <h1 className="text-lg font-bold text-gray-800 truncate">
+            {appTitle}
           </h1>
+
           <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="text-gray-700 text-2xl"
+            type="button"
+            aria-label="Toggle Menu"
+            onClick={() => setIsOpen((prev) => !prev)}
+            className="text-2xl text-gray-700"
           >
             {isOpen ? "✖" : "☰"}
           </button>
         </div>
 
-        {/* Mobile Sidebar Overlay */}
+        {/* Mobile Sidebar */}
         {isOpen && (
           <div
-            className="fixed inset-0 bg-black bg-opacity-50 z-50"
+            className="fixed inset-0 z-50 bg-black/50"
             onClick={() => setIsOpen(false)}
           >
             <div
-              className="w-64 bg-white h-full shadow-md"
+              className="h-full w-64 bg-white shadow-lg"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="p-4 border-b border-gray-200">
-                <h1 className="text-xl font-bold text-gray-800">StoryBook</h1>
+                <h1 className="text-lg font-bold text-gray-800">
+                  {appTitle}
+                </h1>
               </div>
+
               <Sidebar onClick={() => setIsOpen(false)} />
             </div>
           </div>
         )}
 
+        {/* Header */}
+        <Header />
+
         {/* Page Content */}
-        <main className="flex-1  overflow-auto p-5 ">
-          <Header />
+        <main className="flex-1 overflow-auto p-5">
           <Outlet />
         </main>
       </div>

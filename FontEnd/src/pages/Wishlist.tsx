@@ -12,20 +12,20 @@ const Wishlist = () => {
 
   // ✅ Function to remove a single item
   const handleRemoveItem = useCallback(
-    (_id: number) => {
+    (_id: string) => {
       const id = _id;
       dispatch(removeFromWishlist(id));
     },
-    [dispatch]
+    [dispatch],
   );
 
   // ✅ Show empty state if wishlist is empty
   if (items.length === 0) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col items-center justify-center text-center py-16">
-          <h2 className="text-3xl font-bold mb-4 text-foreground">Wishlist</h2>
-          <p className="text-muted-foreground mb-6">
+      <div className="container px-4 py-8 mx-auto">
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <h2 className="mb-4 text-3xl font-bold text-foreground">Wishlist</h2>
+          <p className="mb-6 text-muted-foreground">
             Your wishlist is currently empty.
           </p>
 
@@ -42,13 +42,13 @@ const Wishlist = () => {
 
   return (
     <div className="px-6 py-5">
-      <h2 className="text-2xl font-semibold mb-5">My Wishlist</h2>
+      <h2 className="mb-5 text-2xl font-semibold">My Wishlist</h2>
 
-      <p className="text-muted-foreground mb-2">
+      <p className="mb-2 text-muted-foreground">
         {itemCount} {itemCount === 1 ? "item" : "items"} saved
       </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 ">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ">
         {items.map((item) => (
           <div key={item._id} className="bg-white rounded-md shadow-md">
             <div className="relative">
@@ -61,7 +61,7 @@ const Wishlist = () => {
                         : `http://localhost:4000${item.image}`
                     }
                     alt={item.name}
-                    className="mb-4 w-full p-3  h-48 object-contain border border-gray-200 "
+                    className="object-contain w-full h-48 p-3 mb-4 border border-gray-200 "
                   />
                 ) : (
                   <span>No Image</span>
@@ -70,14 +70,14 @@ const Wishlist = () => {
 
               <button
                 onClick={() => handleRemoveItem(item._id)}
-                className="cursor-pointer absolute top-2 right-2 p-2 bg-white/90 hover:bg-white rounded-full shadow-md transition-all"
+                className="absolute p-2 transition-all rounded-full shadow-md cursor-pointer top-2 right-2 bg-white/90 hover:bg-white"
               >
                 <Trash2 className="w-4 h-4 text-destructive" />
               </button>
 
               {/* ✅ Discount badge */}
 
-              <div className="absolute top-2 left-2 bg-accent text-accent-foreground px-2 py-1 rounded-md text-xs font-bold">
+              <div className="absolute px-2 py-1 text-xs font-bold rounded-md top-2 left-2 bg-accent text-accent-foreground">
                 ₹ {item.originalPrice}
               </div>
 
@@ -87,11 +87,11 @@ const Wishlist = () => {
                 }  absolute inset-0 bg-black/50 flex items-center justify-center`}
               >
                 {item.inStock ? (
-                  <div className=" bg-green-600 text-white px-2 py-1 rounded-md text-xs font-bold">
+                  <div className="px-2 py-1 text-xs font-bold text-white bg-green-600 rounded-md ">
                     In Stock
                   </div>
                 ) : (
-                  <div className="  bg-red-600 text-white px-2 py-1 rounded-md text-xs font-bold">
+                  <div className="px-2 py-1 text-xs font-bold text-white bg-red-600 rounded-md ">
                     Out of Stock
                   </div>
                 )}
@@ -99,12 +99,12 @@ const Wishlist = () => {
             </div>
 
             <div className="px-4 py-4">
-              <h3 className="font-semibold text-foreground mb-2">
+              <h3 className="mb-2 font-semibold text-foreground">
                 {item.name}
               </h3>
               <div className="flex items-center mb-2">
                 <div className="flex items-center">
-                  <span className="text-sm text-muted-foreground ml-1">
+                  <span className="ml-1 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <div className="text-[12px] font-medium px-2 py-0.5 bg-green-600 items-center text-white rounded inline-flex  gap-1">
                         <span>{item?.rating}</span>
@@ -118,7 +118,7 @@ const Wishlist = () => {
                   </span>
                 </div>
               </div>
-              <div className="flex items-center space-x-4 mb-1 pt-2">
+              <div className="flex items-center pt-2 mb-1 space-x-4">
                 <span className="text-lg font-bold text-foreground">
                   ₹{item?.price}
                 </span>
@@ -135,7 +135,7 @@ const Wishlist = () => {
               </Button>
             </div>
 
-            <p className="text-xs text-muted-foreground  px-4 py-2">
+            <p className="px-4 py-2 text-xs text-muted-foreground">
               Added {new Date().toLocaleDateString()}
             </p>
           </div>

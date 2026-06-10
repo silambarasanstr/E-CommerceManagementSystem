@@ -1,45 +1,50 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
-    },
-    price: {
-      type: Number,
-      required: true,
-    },
-    category: {
-      type: String,
-      enum: ["mobiles", "appliances"], // matches your frontend categories
-      required: true,
     },
 
     description: {
       type: String,
-      required: true,
     },
-    image: { type: String }, // store image URL/path
+
+    price: {
+      type: Number,
+    },
+
     originalPrice: {
       type: Number,
-      required: true,
     },
+
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+    },
+
+    image: {
+      type: String,
+    },
+
     rating: {
       type: Number,
-      required: true,
+      default: 0,
     },
 
     reviews: {
       type: Number,
-      required: true,
+      default: 0,
     },
+
     inStock: {
       type: Boolean,
-      required: true,
+      default: true,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  },
 );
 
-module.exports = mongoose.model("Product", productSchema);
+export default mongoose.model("Product", productSchema);

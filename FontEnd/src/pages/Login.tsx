@@ -66,7 +66,7 @@ const Login = () => {
             <div>
               <Label htmlFor="email" text="Email Address" />
               <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Mail className="absolute w-4 h-4 left-3 top-3 text-muted-foreground" />
                 <Input
                   type="email"
                   name="email"
@@ -82,7 +82,7 @@ const Login = () => {
             <div>
               <Label htmlFor="password" text="Password" />
               <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Lock className="absolute w-4 h-4 left-3 top-3 text-muted-foreground" />
                 <Input
                   type="password"
                   name="password"
@@ -100,7 +100,7 @@ const Login = () => {
               className="w-full text-white bg-[#0d61fd] px-2 py-2 flex justify-center items-center"
               disabled={loading || !formData.email || !formData.password} // 👈 extra check
             >
-              {loading && <Loader2 className="animate-spin mr-2 h-4 w-4" />}
+              {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               {loading ? "Signing In..." : "Sign In"}
             </Button>
           </form>
@@ -110,7 +110,7 @@ const Login = () => {
               Don't have an account?{" "}
               <Link
                 to="/register"
-                className="text-primary hover:text-primary/80 transition-colors font-medium"
+                className="font-medium transition-colors text-primary hover:text-primary/80"
               >
                 Create one here
               </Link>
@@ -118,13 +118,13 @@ const Login = () => {
           </div>
 
           <div className="mt-6 p-4 bg-[#f2ebe3] rounded-lg">
-            <p className="text-sm font-medium text-foreground mb-2">
+            <p className="mb-2 text-sm font-medium text-foreground">
               Demo Credentials:
             </p>
             <p className="text-xs text-muted-foreground">
-              Email: test@example.com
+              Email: admin@example.com
               <br />
-              Password: 123456
+              Password: 12345
             </p>
           </div>
         </div>

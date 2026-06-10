@@ -11,6 +11,7 @@ export type Order = {
   grandTotal: number;
   date: string;
   status: "pending" | "processing" | "delivered";
+  paymentMethod: "cod" | "online";
   shippingDetails: {
     name: string;
     address: string;
@@ -24,13 +25,11 @@ type OrdersState = {
   orders: Order[];
 };
 
-// 🔹 Load from localStorage
 const loadOrders = (): Order[] => {
   const data = localStorage.getItem("orders");
   return data ? JSON.parse(data) : [];
 };
 
-// 🔹 Save to localStorage
 const saveOrders = (orders: Order[]) => {
   localStorage.setItem("orders", JSON.stringify(orders));
 };
@@ -45,7 +44,7 @@ export const ordersSlice = createSlice({
   reducers: {
     placeOrder: (state, action: PayloadAction<Order>) => {
       state.orders.push(action.payload);
-      saveOrders(state.orders); // ✅ persist to localStorage
+      saveOrders(state.orders);
     },
     updateOrderStatus: (
       state,
@@ -54,12 +53,12 @@ export const ordersSlice = createSlice({
       const order = state.orders.find((o) => o.id === action.payload.id);
       if (order) {
         order.status = action.payload.status;
-        saveOrders(state.orders); // ✅ persist after update
+        saveOrders(state.orders);
       }
     },
     clearOrders: (state) => {
       state.orders = [];
-      localStorage.removeItem("orders"); // ✅ clear from storage
+      localStorage.removeItem("orders");
     },
   },
 });

@@ -1,5 +1,5 @@
-const API_URL = "https://e-commercemanagementsystem.onrender.com/api/products";
-//const API_URL = "http://localhost:4000/api/products";
+//const API_URL = "https://e-commercemanagementsystem.onrender.com/api/products";
+const API_URL = "http://localhost:4000/api/products";
 
 export type ProductPayloadType = {
   _id: number;

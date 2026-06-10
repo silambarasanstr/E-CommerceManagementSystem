@@ -11,10 +11,7 @@ import Layout from "./Layout/Layout";
 import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
 import Products from "./pages/Products";
-import Orders from "./pages/Orders";
-import Inventory from "./pages/Inventory";
-import Customers from "./pages/Customers";
-import Analytics from "./pages/Analytics";
+
 import PrivateRoute from "./component/PrivateRoute";
 
 function App() {
@@ -37,10 +34,7 @@ function App() {
               }
             />
             <Route path="/products" element={<Products />} />
-            <Route path="/orders" element={<Orders />} />
-            <Route path="/inventory" element={<Inventory />} />
-            <Route path="/customers" element={<Customers />} />
-            <Route path="/analytics" element={<Analytics />} />
+
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

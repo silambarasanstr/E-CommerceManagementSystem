@@ -1,36 +1,23 @@
-const express = require("express");
+import express from "express";
+import multer from "multer";
+
+import {
+  createProduct,
+  getProducts,
+} from "../controllers/productController.js";
+
 const router = express.Router();
-const multer = require("multer");
-const productController = require("../controllers/productController");
 
-// Multer storage setup
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads/"),
-  filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
-});
-
-// Optional: filter only images
-const upload = multer({
-  storage,
-  fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith("image/")) {
-      cb(null, true);
-    } else {
-      cb(new Error("Only images are allowed"), false);
-    }
+  destination: "uploads/",
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname);
   },
 });
 
-// Routes
-router.get("/", productController.getProduct);
-router.post("/", upload.single("image"), productController.createProduct);
+const upload = multer({ storage });
 
-// 🔍 Search route MUST be above `/:id`
-router.get("/search", productController.searchProduct);
+router.post("/", upload.single("image"), createProduct);
+router.get("/", getProducts);
 
-router.get("/:id", productController.getProductById);
-router.put("/:id", upload.single("image"), productController.updateProduct);
-router.delete("/:id", productController.deleteProduct);
-
-
-module.exports = router;
+export default router;

@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 export type WishlistItem = {
-  _id: number;
+  _id: string;
   name: string;
   price: number;
   originalPrice?: number;
@@ -46,7 +46,7 @@ const wishlistSlice = createSlice({
     },
 
     // ✅ Remove a single item from wishlist
-    removeFromWishlist: (state, action: PayloadAction<number>) => {
+    removeFromWishlist: (state, action: PayloadAction<string>) => {
       state.items = state.items.filter((item) => item._id !== action.payload);
       state.itemCount = state.items.length;
       localStorage.setItem("wishlist", JSON.stringify(state)); // persist

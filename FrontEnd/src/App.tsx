@@ -6,7 +6,7 @@ import Layout from "./Layout/Layout";
 // import NotFound from "./pages/NotFound";
 // import PrivateRoute from "./component/PrivateRoute";
 import Products from "./pages/Products";
-// import Home from "./pages/Home";
+import Home from "./pages/Home";
 // import Category from "./pages/Category";
 // import Cart from "./pages/Cart";
 // import Register from "./pages/Register";
@@ -27,9 +27,8 @@ function App() {
           <Router>
             <Routes>
               <Route element={<Layout />}>
-                {/* <Route path="/" element={<Home />} />
-                <Route path="/category/:name" element={<Category />} /> */}
-                <Route path="/category" element={<Category />} /> 
+                <Route path="/" element={<Home />} />
+                <Route path="/category" element={<Category />} />
                 <Route path="/product" element={<Products />} />
                 {/* <Route path="/product/:id" element={<Products />} /> */}
                 {/* <Route path="/wishlist" element={<Wishlist />} />

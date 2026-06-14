@@ -5,12 +5,16 @@ import Add2 from "../assets/add2.webp";
 import Add3 from "../assets/add3.webp";
 import Poster from "../assets/poster.webp";
 import { getProducts } from "../services/productService";
-import type { Product } from "../types/product";
-import { categories, type ProductType } from "../data/products";
+import type { ProductType } from "../types/product";
+import type { CategoryType } from "../types/category";
 import ProductSection from "../component/ProductSection";
+import CategoryCard from "../component/CategoryCard";
+import { getCategories } from "../services/categoryServices";
 
 const Home: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<ProductType[]>([]);
+  //const [category, setCategory] = useState<CategoryType | null>(null);
+  const [category, setCategory] = useState<CategoryType[]>([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -24,6 +28,19 @@ const Home: React.FC = () => {
     fetchProducts();
   }, []);
 
+  // Fetch products by category when the component mounts
+  useEffect(() => {
+    const fetchCategory = async () => {
+      try {
+        const data = await getCategories();
+        setCategory(data);
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+      }
+    };
+    fetchCategory();
+  }, []);
+
   return (
     <div className="px-3 py-3 space-y-6">
       {/* Banner */}
@@ -35,13 +52,12 @@ const Home: React.FC = () => {
         />
       </div>
 
-      {/* Mobiles Section */}
-      {/* <ProductSection
-        categoryId="mobiles"
-        title={categories.find((c) => c.id === "mobiles")?.name || "Mobiles"}
+      
+      <ProductSection
+        title={"Shop by Product"}
         products={products}
         poster={Poster}
-      /> */}
+      />
 
       <div className="grid grid-cols-1 gap-4 my-6 sm:grid-cols-2 md:grid-cols-3">
         {[Add1, Add2, Add3].map((ad, idx) => (
@@ -58,14 +74,9 @@ const Home: React.FC = () => {
         ))}
       </div>
 
-      {/* <ProductSection
-        // title={
-        //   categories.find((c) => c.id === "appliances")?.name || "Appliances"
-        // }
-         products={products}
-        poster={Poster}
-        // reverse
-      /> */}
+      {category.map((category) => (
+        <CategoryCard key={category._id} category={category} title={"Shop by category"} />
+      ))}
     </div>
   );
 };

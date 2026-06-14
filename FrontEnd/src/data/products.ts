@@ -11,7 +11,7 @@ export type ProductType = {
   image?: string;
 };
 
-export const categories = [
+export const CategoriesType = [
   { id: "mobiles", name: "Mobiles" },
   { id: "appliances", name: "Home Appliances" },
 ];

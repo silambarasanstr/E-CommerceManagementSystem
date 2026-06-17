@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo, useEffect, useState } from "react";
 import Banner from "../assets/banner.webp";
 import Add1 from "../assets/add1.webp";
 import Add2 from "../assets/add2.webp";
@@ -41,6 +41,22 @@ const Home: React.FC = () => {
     fetchCategory();
   }, []);
 
+  const featuredProducts = useMemo(
+    () => products.filter((p) => p.isFeatured),
+    [products],
+  );
+
+
+
+ const previewCategories = useMemo(
+    () => category.slice(0, 4),
+    [category]
+  );
+
+   useEffect(() => {
+    document.title = "Home | Ecommerce";
+  }, []);
+
   return (
     <div className="px-3 py-3 space-y-6">
       {/* Banner */}
@@ -52,10 +68,9 @@ const Home: React.FC = () => {
         />
       </div>
 
-      
       <ProductSection
-        title={"Shop by Product"}
-        products={products}
+        title={"Featured Products"}
+        products={featuredProducts.slice(0, 5)}
         poster={Poster}
       />
 
@@ -74,9 +89,11 @@ const Home: React.FC = () => {
         ))}
       </div>
 
-      {category.map((category) => (
-        <CategoryCard key={category._id} category={category} title={"Shop by category"} />
-      ))}
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {previewCategories.map((category) => (
+          <CategoryCard key={category._id} category={category} />
+        ))}
+      </div>
     </div>
   );
 };

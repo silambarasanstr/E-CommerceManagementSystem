@@ -54,16 +54,38 @@ export const loginUser = async (req, res) => {
       });
     }
 
-    const token = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "1h",
-      }
-    );
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
     res.json({
       token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
+
+export const getProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      user,
     });
   } catch (err) {
     res.status(500).json({
@@ -72,10 +94,8 @@ export const loginUser = async (req, res) => {
   }
 };
 
-// Dashboard Controller
-export const getDashboard = async (req, res) => {
-  res.json({
-    message: "Welcome to Dashboard",
-    user: req.user,
+export const logoutUser = (req, res) => {
+  res.status(200).json({
+    message: "User logged out successfully",
   });
 };

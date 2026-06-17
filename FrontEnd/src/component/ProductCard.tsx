@@ -23,16 +23,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </div>
 
       {/* Image */}
-      <Link to={`/product/${product._id}`} className="flex items-center justify-center p-4 bg-gray-50 h-44">
+      <Link to={`/product/${product._id}`} className=" bg-gray-50 h-44">
         {product.image ? (
           <img
             src={
               product.image.startsWith("http")
                 ? product.image
-                : `${baseUrl}${product.image}`
+                : `${baseUrl}${product.image || "ddd"}`
             }
             alt={product.name}
-            className="object-contain h-full"
+            className="object-cover w-full h-full"
           />
         ) : (
           <span className="text-sm text-gray-400">No Image</span>

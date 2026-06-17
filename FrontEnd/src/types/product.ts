@@ -9,4 +9,5 @@ export interface ProductType {
   originalPrice?: number;
   rating?: number;
   reviews?: number;
+  isFeatured?: boolean;
 }

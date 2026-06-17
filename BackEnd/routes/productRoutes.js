@@ -2,8 +2,10 @@ import express from "express";
 import multer from "multer";
 
 import {
+  getAllProducts,
   createProduct,
   getProducts,
+
 } from "../controllers/productController.js";
 
 const router = express.Router();
@@ -19,5 +21,6 @@ const upload = multer({ storage });
 
 router.post("/", upload.single("image"), createProduct);
 router.get("/", getProducts);
+router.get("/all", getAllProducts);
 
 export default router;

@@ -5,6 +5,10 @@ import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
+import cartRoutes from "./routes/cartRoutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
+import reviewRoutes  from "./routes/reviewRoutes.js";
+import addressRoutes from "./routes/addressRoutes.js";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -45,7 +49,11 @@ app.get("/", (req, res) => {
 app.use("/api", authRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/products", productRoutes);
-app.use('/api/categories', categoryRoutes);
+app.use("/api/categories", categoryRoutes);
+app.use("/api/cart", cartRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/reviews", reviewRoutes);
+app.use("/api/addresses", addressRoutes);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {

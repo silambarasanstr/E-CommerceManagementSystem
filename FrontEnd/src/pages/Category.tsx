@@ -493,10 +493,13 @@ const Category = () => {
   return (
     <div className="max-w-screen-xl px-3 py-4 mx-auto">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Categories</h1>
+        <h1 className="text-3xl font-bold">Shop By Category</h1>
+        <p className="mt-1 text-gray-500">
+          {categoryProducts.length} categor{categoryProducts.length === 1 ? "y" : "ies"} available
+        </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-2">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {categoryProducts.map((category) => (
           <CategoryCard key={category._id} category={category} />
         ))}

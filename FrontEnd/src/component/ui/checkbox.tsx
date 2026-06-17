@@ -1,15 +1,21 @@
-import { useId } from "react";
-
 type CheckboxProps = {
+  id: string;
   label: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
   className?: string;
+  count?: number;
+  handleFilter?: () => void;
 };
 
-const Checkbox = ({ label, checked, onChange, className }: CheckboxProps) => {
-  const id = useId();
-
+const Checkbox = ({
+  id,
+  label,
+  checked,
+  onChange,
+  className,
+  count,
+}: CheckboxProps) => {
   return (
     <label
       htmlFor={id}
@@ -22,9 +28,14 @@ const Checkbox = ({ label, checked, onChange, className }: CheckboxProps) => {
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="h-4 w-4 accent-blue-500 cursor-pointer"
+        className="w-3 h-3 cursor-pointer accent-blue-500"
       />
       <span className="text-gray-700">{label}</span>
+      {count !== undefined && (
+        <span className="bg-blue-100 text-blue-800 text-xs font-semibold ml-2 px-2.5 py-0.5 rounded-full">
+          {count}
+        </span>
+      )}
     </label>
   );
 };

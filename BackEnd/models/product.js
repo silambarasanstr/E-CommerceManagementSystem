@@ -27,6 +27,8 @@ const productSchema = new mongoose.Schema(
       type: String,
     },
 
+    brand: { type: String, trim: true, default: "" },
+
     rating: {
       type: Number,
       default: 0,
@@ -41,10 +43,15 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    isFeatured: { type: Boolean, default: false },
   },
   {
     timestamps: true,
   },
 );
 
-export default mongoose.model("Product", productSchema);
+productSchema.index({ name: "text", description: "text" });
+
+const Product = mongoose.model("Product", productSchema);
+
+export default Product;

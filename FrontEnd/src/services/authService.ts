@@ -39,3 +39,9 @@ export const registerUser = async ({
 
   return data;
 };
+
+
+// Get Token
+export const getToken = () => {
+  return localStorage.getItem("token");
+};

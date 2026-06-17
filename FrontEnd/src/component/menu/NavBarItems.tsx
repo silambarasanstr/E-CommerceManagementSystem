@@ -19,12 +19,12 @@ const NavBarItems = ({ items }: NavBarItemsProps) => {
   return (
     <div>
       {hiderHeaderFooter ? (
-        <div className="hidden md:block  px-3 pt-3">
-          <div className="flex justify-evenly text-center bg-white p-2">
+        <div className="hidden px-3 pt-3 md:block">
+          <div className="flex p-2 text-center bg-white justify-evenly">
             {items.map((item) => (
               <div key={item.id}>
-                <Link className="bg-white" to={item.href}>
-                  <img src={item.img} alt={item.label} />
+                <Link className="bg-white " to={item.href}>
+                  <img src={item.img} alt={item.label}  />
                   <span className="font-semibold">{item.label}</span>
                 </Link>
               </div>

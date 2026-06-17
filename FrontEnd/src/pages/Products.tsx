@@ -1,66 +1,100 @@
 import { useEffect, useState } from "react";
-import { getProducts } from "../services/productService";
+import { getAllProducts } from "../services/productService";
+import { getCategories } from "../services/categoryServices";
 import type { ProductType } from "../types/product";
 import ProductCard from "../component/ProductCard";
-import ProductSidebar from "../component/ProductSidebar";
+import EmptyState from "../component/ui/EmptyState";
+import ErrorState from "../component/ui/ErrorState";
+import LoadingState from "../component/ui/LoadingState";
+import Checkbox from "../component/ui/checkbox";
+import type { CategoryType } from "../types/category";
+import { useSearchParams } from "react-router-dom";
 
 const Products = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const category = searchParams.get("category") || "";
+
   const [products, setProducts] = useState<ProductType[]>([]);
+  const [categories, setCategories] = useState<CategoryType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+
+      const data = await getAllProducts({
+        category,
+        // brand,
+        // minPrice,
+        // maxPrice,
+        // sort,
+        // page,
+        limit: 12,
+      });
+
+      console.log("Products =>", data);
+
+      setProducts(data);
+    } catch (error) {
+      setError("Error fetching products");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const data = await getProducts();
-        setProducts(data);
-      } catch (err) {
-        setError("Failed to load products. Please try again.");
-      } finally {
-        setLoading(false);
-      }
+    const fetchCategories = async () => {
+      const data = await getCategories();
+      setCategories(data);
     };
 
-    fetchProducts();
+    fetchCategories();
   }, []);
 
+  useEffect(() => {
+    fetchProducts();
+  }, [category]);
+
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-8 h-8 border-4 border-gray-300 rounded-full animate-spin border-t-blue-500" />
-      </div>
-    );
+    return <LoadingState />;
   }
 
   if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 text-center">
-        <p className="mb-4 text-red-500">{error}</p>
-        <button
-          onClick={() => window.location.reload()}
-          className="px-4 py-2 text-sm text-white bg-blue-500 rounded-md hover:bg-blue-600"
-        >
-          Retry
-        </button>
-      </div>
-    );
+    return <ErrorState error={error} />;
   }
 
   if (products.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 text-center">
-        <p className="text-gray-500">No products found.</p>
-      </div>
-    );
+    return <EmptyState message="No products found." />;
   }
 
   return (
     <div className="max-w-screen-xl px-3 py-4 mx-auto">
       <div className="flex gap-4">
-        <aside className="w-64 shrink-0">
-          <ProductSidebar />
+        <aside className="w-64 px-4 py-3 bg-white border border-gray-200">
+          {/* <ProductSidebar /> */}
+          <div>
+            <h2 className="font-semibold text-[15px]">Filters</h2>
+          </div>
+
+          <div className="px-4 text-sm border-b border-gray-100">
+            <div className="pb-3 space-y-0.5">
+              {categories.map((cat) => (
+                <Checkbox
+                  key={cat._id}
+                  id={cat._id}
+                  label={cat.name}
+                  checked={category === cat.name}
+                  onChange={() => {
+                    setSearchParams({
+                      category: cat.name,
+                    });
+                  }}
+                />
+              ))}
+            </div>
+          </div>
         </aside>
 
         <main className="flex-1 min-w-0">

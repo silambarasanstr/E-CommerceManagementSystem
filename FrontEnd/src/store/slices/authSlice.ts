@@ -13,9 +13,11 @@ interface AuthState {
   loading: boolean;
 }
 
+const storedUser = localStorage.getItem("user");
+
 const initialState: AuthState = {
-  isAuthenticated: false,
-  user: null,
+  isAuthenticated: !!storedUser,
+   user: storedUser ? JSON.parse(storedUser) : null,
   loading: false,
 };
 
@@ -26,13 +28,25 @@ const authSlice = createSlice({
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     },
+
     loginSuccess: (state, action: PayloadAction<User>) => {
       state.isAuthenticated = true;
       state.user = action.payload;
       state.loading = false;
     },
+
+    logout: (state) => {
+      state.isAuthenticated = false;
+      state.user = null;
+      state.loading = false;
+    },
   },
 });
 
-export const { setLoading, loginSuccess } = authSlice.actions;
+export const {
+  setLoading,
+  loginSuccess,
+  logout,
+} = authSlice.actions;
+
 export default authSlice.reducer;

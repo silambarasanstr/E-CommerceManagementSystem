@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { AxiosError } from "axios";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Label from "../component/ui/label";
 import Input from "../component/ui/input";
 import Button from "../component/ui/button";
@@ -8,21 +7,25 @@ import { Mail, Lock, Loader2 } from "lucide-react";
 import { loginUser } from "../services/authService";
 import toast from "react-hot-toast";
 
+import { loginSuccess, setLoading } from "../store/slices/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "../store/store";
+
 type LoginFormType = {
   email: string;
   password: string;
 };
 
 const Login = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
+
+  const loading = useSelector((state: RootState) => state.auth.loading);
 
   const [formData, setFormData] = useState<LoginFormType>({
     email: "",
     password: "",
   });
-  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -31,23 +34,32 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+
+    dispatch(setLoading(true));
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
       const data = await loginUser(formData);
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      dispatch(
+        loginSuccess({
+          id: data.user._id,
+          name: data.user.name,
+          email: data.user.email,
+        }),
+      );
+
       toast.success("Login successfully!", {
         duration: 9000,
       });
-      navigate(from, { replace: true }); // redirect to attempted page
+      navigate("/");
     } catch (err) {
-      const error = err as AxiosError<{ message: string }>;
-      console.error(error);
-      toast.error(error.response?.data?.message || "Invalid email or password");
+      console.error(err);
+      toast.error("Invalid email or password");
     } finally {
-      setLoading(false);
+      dispatch(setLoading(false));
     }
   };
 
@@ -98,7 +110,7 @@ const Login = () => {
             <Button
               type="submit"
               className="w-full text-white bg-[#0d61fd] px-2 py-2 flex justify-center items-center"
-              disabled={loading || !formData.email || !formData.password} // 👈 extra check
+              disabled={loading || !formData.email || !formData.password}
             >
               {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               {loading ? "Signing In..." : "Sign In"}
@@ -124,7 +136,7 @@ const Login = () => {
             <p className="text-xs text-muted-foreground">
               Email: admin@example.com
               <br />
-              Password: 12345
+              Password: Admin@123
             </p>
           </div>
         </div>

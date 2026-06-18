@@ -6,32 +6,33 @@ import Layout from "./Layout/Layout";
 import Products from "./pages/Products";
 import Home from "./pages/Home";
 import Category from "./pages/Category";
+import CategoryProducts from "./pages/CategoryProducts";
 import { Toaster } from "react-hot-toast";
 import Register from "./auth/Register";
 import AuthRoute from "./routes/AuthRoute";
+import ProductsDetails from "./pages/ProductsDetails";
 
 function App() {
   return (
-    <>
-      <div>
-        <ErrorBoundary>
-          <Toaster position="top-right" reverseOrder={false} />
-          <Router>
-            <Routes>
-              <Route element={<Layout />}>
-                <Route path="/" element={<Home />} />
-                <Route path="/category" element={<Category />} />
-                <Route path="/product" element={<Products />} />
-              </Route>
-              <Route element={<AuthRoute />}>
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-              </Route>
-            </Routes>
-          </Router>
-        </ErrorBoundary>
-      </div>
-    </>
+    <ErrorBoundary>
+      <Toaster position="top-right" reverseOrder={false} />
+      <Router>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/category" element={<Category />} />
+            <Route path="/category/:categoryName" element={<CategoryProducts />} />
+            <Route path="/product" element={<Products />} />
+            <Route path="/product/:id" element={<ProductsDetails />} />
+          </Route>
+
+          <Route element={<AuthRoute />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Route>
+        </Routes>
+      </Router>
+    </ErrorBoundary>
   );
 }
 

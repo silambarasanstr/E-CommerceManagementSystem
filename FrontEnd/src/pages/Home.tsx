@@ -5,55 +5,40 @@ import Add2 from "../assets/add2.webp";
 import Add3 from "../assets/add3.webp";
 import Poster from "../assets/poster.webp";
 import { getProducts } from "../services/productService";
-import type { ProductType } from "../types/product";
-import type { CategoryType } from "../types/category";
 import ProductSection from "../component/ProductSection";
-import CategoryCard from "../component/CategoryCard";
+import type { ProductType } from "../types/product";
 import { getCategories } from "../services/categoryServices";
+import CategorySection from "../component/CategorySection";
+import type { CategoryType } from "../types/category";
 
 const Home: React.FC = () => {
   const [products, setProducts] = useState<ProductType[]>([]);
-  //const [category, setCategory] = useState<CategoryType | null>(null);
   const [category, setCategory] = useState<CategoryType[]>([]);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchData = async () => {
       try {
-        const data = await getProducts();
-        setProducts(data);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-    };
-    fetchProducts();
-  }, []);
+        const [productData, categoryData] = await Promise.all([
+          getProducts(),
+          getCategories(),
+        ]);
 
-  // Fetch products by category when the component mounts
-  useEffect(() => {
-    const fetchCategory = async () => {
-      try {
-        const data = await getCategories();
-        setCategory(data);
+        setProducts(productData);
+        setCategory(categoryData);
       } catch (err) {
-        console.error("Error fetching categories:", err);
+        console.error("Error fetching data:", err);
       }
     };
-    fetchCategory();
+
+    fetchData();
   }, []);
 
-  const featuredProducts = useMemo(
-    () => products.filter((p) => p.isFeatured),
-    [products],
-  );
+  const featuredProducts = products?.filter((p) => p.isFeatured) ?? [];
 
+  const PreviewProducts = featuredProducts.slice(0, 5);
+  const PreviewCategories = category.slice(0, 5);
 
-
- const previewCategories = useMemo(
-    () => category.slice(0, 4),
-    [category]
-  );
-
-   useEffect(() => {
+  useEffect(() => {
     document.title = "Home | Ecommerce";
   }, []);
 
@@ -70,7 +55,7 @@ const Home: React.FC = () => {
 
       <ProductSection
         title={"Featured Products"}
-        products={featuredProducts.slice(0, 5)}
+        products={PreviewProducts}
         poster={Poster}
       />
 
@@ -82,18 +67,19 @@ const Home: React.FC = () => {
           >
             <img
               src={ad}
-              alt={`ad ${idx + 1}`}
+              alt={`advertisement ${idx + 1}`}
               className="object-cover w-full h-48 transition-transform duration-300 group-hover:scale-105"
             />
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {previewCategories.map((category) => (
-          <CategoryCard key={category._id} category={category} />
-        ))}
-      </div>
+      <CategorySection
+        title="Shop by Category"
+        categories={PreviewCategories}
+        poster={Poster}
+        reverse={true}
+      />
     </div>
   );
 };

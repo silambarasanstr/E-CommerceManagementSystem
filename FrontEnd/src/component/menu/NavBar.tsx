@@ -1,35 +1,70 @@
+import { useEffect, useState } from "react";
 import NavBarItems from "./NavBarItems";
-import Surf from "../../assets/micon1.webp";
-import Mobi from "../../assets/micon2.webp";
 import fash from "../../assets/micon3.webp";
-import Elct from "../../assets/micon4.webp";
-import Chair from "../../assets/micon5.webp";
-import HomeApp from "../../assets/micon6.webp";
-import Books from "../../assets/micon8.webp";
 
-const navItems = [
-  { id: "mobile", label: "Mobiles", href: "/category/mobiles", img: Mobi },
-  {
-    id: "electronics",
-    label: "Electronics",
-    href: "/category/electronics",
-    img: HomeApp,
-  },
-  {
-    id: "home-appliances-1",
-    label: "Clothing",
-    href: "/category/appliances",
-    img: fash,
-  },
-  { id: "category", label: "All Category", href: "/category", img: fash },
-  { id: "product", label: "Products", href: "/product", img: Elct },
-  { id: "surfing", label: "Books", href: "/", img: Books },
-  { id: "chairs", label: "Home & Kitchen", href: "/", img: Chair },
-  { id: "home-appliances-2", label: "Home Appliances", href: "/", img: Elct },
-];
+import elct from "../../assets/micon6.webp";
+import sport from "../../assets/micon8.webp";
+import Home from "../../assets/micon5.webp";
+import prod from "../../assets/micon1.webp";
+import book from "../../assets/micon9.webp";
+
+import { getCategories } from "../../services/categoryServices";
+import type { CategoryType } from "../../types/category";
 
 const NavBar = () => {
-  return <NavBarItems items={navItems} />;
+  const [categories, setCategories] = useState<CategoryType[]>([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getCategories();
+        setCategories(data);
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  const staticItems = [
+    {
+      id: "product",
+      label: "Products",
+      href: "/product",
+      img: prod,
+    },
+    {
+      id: "all-category",
+      label: "All Category",
+      href: "/category",
+      img: fash,
+    },
+  ];
+
+  const categoryImageMap: Record<string, string> = {
+    Clothing: fash,
+    Books: book,
+    Electronics: elct,
+    "Home & Kitchen": Home,
+    Sports: sport,
+  };
+
+  const dynamicItems = categories.map((cat) => ({
+    id: cat._id,
+    label: cat.name,
+    href: `/category/${cat.name}`,
+    img: categoryImageMap[cat.name] || fash, // fallback
+  }));
+
+  // ✅ REMOVE DUPLICATES (IMPORTANT FIX)
+  const mergedItems = [...staticItems, ...dynamicItems];
+
+  const navItems = Array.from(
+    new Map(mergedItems.map((item) => [item.label, item])).values(),
+  );
+
+  return <NavBarItems items={navItems} categories={categories} />;
 };
 
 export default NavBar;

@@ -64,7 +64,7 @@ export const getAllProducts = async ({
 };
 
 export const getProductById = async (id: string) => {
-  return api<ProductType>(`/products/${id}`);
+  return api<ProductType>(`/products/all/${id}`);
 };
 
 export const createProduct = async (

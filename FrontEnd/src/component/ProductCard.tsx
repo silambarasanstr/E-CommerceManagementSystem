@@ -16,7 +16,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
 
   return (
-    <div className="relative flex flex-col overflow-hidden transition-shadow duration-200 bg-white border border-gray-100 shadow-sm rounded-xl hover:shadow-md">
+    <div className="relative flex flex-col overflow-hidden transition-shadow duration-200 bg-white border border-gray-100 shadow-sm hover:shadow-md">
       {/* Wishlist */}
       <div className="absolute z-10 top-3 right-3">
         <WishlistButton product={product} />
@@ -64,7 +64,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <button
           onClick={handleAddToCart}
           disabled={!product.inStock}
-          className={`mt-2 w-full py-2 rounded-lg text-sm font-medium transition-colors ${
+          className={`mt-2 w-full py-2  text-sm font-medium transition-colors ${
             product.inStock
               ? "bg-gray-900 text-white hover:bg-gray-700"
               : "bg-gray-100 text-gray-400 cursor-not-allowed"

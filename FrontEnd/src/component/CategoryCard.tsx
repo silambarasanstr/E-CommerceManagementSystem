@@ -7,14 +7,10 @@ type CategoryCardProps = {
 
 const baseUrl = "http://localhost:4000";
 
-const ProductCategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
+const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
   return (
-    <Link
-      to={`/category/${category._id}`}
-      className="block h-full group"
-    >
-      <div className="h-full overflow-hidden transition-all duration-300 bg-white border border-gray-100 shadow-sm rounded-2xl hover:shadow-xl hover:-translate-y-1">
-        
+    <Link to={`/category/${category._id}`} className="block h-full group">
+      <div className="h-full overflow-hidden transition-all duration-300 bg-white border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1">
         {/* Image */}
         <div className="overflow-hidden bg-gray-100 aspect-[4/3]">
           {category.image ? (
@@ -58,4 +54,4 @@ const ProductCategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
   );
 };
 
-export default ProductCategoryCard;
+export default CategoryCard;

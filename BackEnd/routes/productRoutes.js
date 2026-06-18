@@ -5,7 +5,7 @@ import {
   getAllProducts,
   createProduct,
   getProducts,
-
+  getProductById
 } from "../controllers/productController.js";
 
 const router = express.Router();
@@ -22,5 +22,6 @@ const upload = multer({ storage });
 router.post("/", upload.single("image"), createProduct);
 router.get("/", getProducts);
 router.get("/all", getAllProducts);
+router.get("/all/:id", getProductById);
 
 export default router;

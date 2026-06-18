@@ -48,7 +48,7 @@ const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm">
-      <div className="container flex items-center gap-4 py-5 mx-auto px-7">
+      <div className="container flex items-center gap-4 py-5 mx-auto bg-white max-w-7xl">
         {/* Logo */}
         <Link to="/" className="text-xl font-bold text-foreground">
           Flip<span className="text-[#3e3e3e]">Kart</span>

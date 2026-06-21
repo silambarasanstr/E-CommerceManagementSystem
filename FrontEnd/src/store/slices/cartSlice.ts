@@ -1,13 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import type { CategoryType } from "../../types/product";
 
 export type CartItem = {
-  _id: number;
+  _id: string;
   name: string;
   price: number;
   image?: string | null;
   quantity: number;
-  category: string;
+  category: CategoryType;
 };
 
 export type CartState = {
@@ -53,21 +54,29 @@ export const cartSlice = createSlice({
   reducers: {
     addToCart: (state, action: PayloadAction<CartItem>) => {
       const exists = state.items.find(
-        (item) => item._id === action.payload._id
+        (item) => item._id === action.payload._id,
       );
-      if (!exists) {
-        state.items.push(action.payload);
-        state.itemCount += 1;
-      } else {
+
+      if (exists) {
         exists.quantity += 1;
+      } else {
+        state.items.push({
+          ...action.payload,
+          quantity: 1,
+        });
+        state.itemCount += 1;
       }
-      localStorage.setItem("cart", JSON.stringify(state)); // ✅ persist
+
+      localStorage.setItem("cart", JSON.stringify(state));
     },
 
-    removeFromCart: (state, action: PayloadAction<number>) => {
+    removeFromCart: (state, action: PayloadAction<string>) => {
       state.items = state.items.filter((item) => item._id !== action.payload);
-      state.itemCount = state.items.length;
-      localStorage.setItem("cart", JSON.stringify(state));
+
+      state.itemCount = state.items.reduce(
+        (total, item) => total + item.quantity,
+        0,
+      );
     },
 
     clearCart: (state) => {
@@ -82,7 +91,7 @@ export const cartSlice = createSlice({
 
     updateQuantity: (
       state,
-      action: PayloadAction<{ _id: number; quantity: number }>
+      action: PayloadAction<{ _id: string; quantity: number }>,
     ) => {
       const item = state.items.find((item) => item._id === action.payload._id);
       if (item) {
@@ -94,7 +103,7 @@ export const cartSlice = createSlice({
     calculateTotals: (state) => {
       state.total = state.items.reduce(
         (total, item) => total + item.price * item.quantity,
-        0
+        0,
       );
       state.shipping = state.total > 0 ? 10 : 0;
       state.tax = state.total * 0.1;

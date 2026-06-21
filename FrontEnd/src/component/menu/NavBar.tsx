@@ -27,6 +27,14 @@ const NavBar = () => {
     fetchCategories();
   }, []);
 
+  const categoryImageMap: Record<string, string> = {
+    Clothing: fash,
+    Books: book,
+    Electronics: elct,
+    "Home & Kitchen": Home,
+    Sports: sport,
+  };
+
   const staticItems = [
     {
       id: "product",
@@ -42,23 +50,21 @@ const NavBar = () => {
     },
   ];
 
-  const categoryImageMap: Record<string, string> = {
-    Clothing: fash,
-    Books: book,
-    Electronics: elct,
-    "Home & Kitchen": Home,
-    Sports: sport,
-  };
-
-  const dynamicItems = categories.map((cat) => ({
-    id: cat._id,
-    label: cat.name,
-    href: `/category/${cat.name}`,
-    img: categoryImageMap[cat.name] || fash, // fallback
+  const categoryItems = [
+    "Clothing",
+    "Books",
+    "Electronics",
+    "Home & Kitchen",
+    "Sports",
+  ].map((name, index) => ({
+    id: String(index + 1),
+    label: name,
+    href: `/category/${encodeURIComponent(name)}`,
+    img: categoryImageMap[name] || fash,
   }));
 
   // ✅ REMOVE DUPLICATES (IMPORTANT FIX)
-  const mergedItems = [...staticItems, ...dynamicItems];
+  const mergedItems = [...staticItems, ...categoryItems];
 
   const navItems = Array.from(
     new Map(mergedItems.map((item) => [item.label, item])).values(),

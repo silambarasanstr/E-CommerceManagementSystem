@@ -46,6 +46,7 @@ export const getAllProducts = async (req, res) => {
     if (search) {
       query.$text = { $search: search };
     }
+    
     if (category) {
       const categoryDoc = await Category.findOne({
         name: { $regex: `^${category}$`, $options: "i" },
@@ -55,6 +56,7 @@ export const getAllProducts = async (req, res) => {
         query.category = categoryDoc._id;
       }
     }
+
     if (brand) {
       query.brand = { $regex: brand, $options: "i" };
     }
@@ -123,6 +125,10 @@ export const getProducts = async (req, res) => {
     });
   }
 };
+
+// export const getAllProductCategories = async (req, res) => {
+//   // add here
+// }
 
 // Create a new Product
 

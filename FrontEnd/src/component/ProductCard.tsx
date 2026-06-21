@@ -1,18 +1,26 @@
 import { Link } from "react-router-dom";
-
 import type { ProductType } from "../types/product";
 import WishlistButton from "./WishlistButton";
+import { addToCart } from "../store/slices/cartSlice";
+import { useAppDispatch } from "../store/hooks";
 
 type ProductCardProps = {
   product: ProductType;
+  showAddToCart?: boolean;
 };
 
 const baseUrl = "http://localhost:4000";
 
-const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const handleAddToCart = (e: React.MouseEvent) => {
+const ProductCard: React.FC<ProductCardProps> = ({
+  product,
+  showAddToCart = true,
+}) => {
+  const dispatch = useAppDispatch();
+
+  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    // TODO: dispatch addToCart action
+
+    dispatch(addToCart({ ...product, quantity: 1 }));
   };
 
   return (
@@ -23,13 +31,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </div>
 
       {/* Image */}
-      <Link to={`/product/${product._id}`} className=" bg-gray-50 h-44">
+      <Link
+        to={`/product/${product._id}`}
+        className="overflow-hidden rounded-t bg-gray-50 h-44"
+      >
         {product.image ? (
           <img
             src={
               product.image.startsWith("http")
                 ? product.image
-                : `${baseUrl}${product.image || "ddd"}`
+                : `${baseUrl}${product.image}`
             }
             alt={product.name}
             className="object-cover w-full h-full"
@@ -47,11 +58,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </h2>
         </Link>
 
-        <p className="text-base font-semibold text-gray-900">₹ {product.price}</p>
+        <p className="text-base font-semibold text-gray-900">
+          ₹ {product.price}
+        </p>
 
         {/* Badge */}
         <span
-          className={`self-start text-xs font-medium  py-0.5 rounded-full ${
+          className={`self-start text-xs font-medium px-2 py-0.5 rounded-full ${
             product.inStock
               ? "bg-green-50 text-green-700"
               : "bg-red-50 text-red-600"
@@ -61,17 +74,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </span>
 
         {/* Add to Cart */}
-        <button
-          onClick={handleAddToCart}
-          disabled={!product.inStock}
-          className={`mt-2 w-full py-2  text-sm font-medium transition-colors ${
-            product.inStock
-              ? "bg-gray-900 text-white hover:bg-gray-700"
-              : "bg-gray-100 text-gray-400 cursor-not-allowed"
-          }`}
-        >
-          {product.inStock ? "Add to Cart" : "Unavailable"}
-        </button>
+        {showAddToCart && (
+          <button
+            onClick={handleAddToCart}
+            disabled={!product.inStock}
+            className={`mt-2 w-full py-2  text-sm font-medium transition-colors ${
+              product.inStock
+                ? "bg-gray-900 text-white hover:bg-gray-700"
+                : "bg-gray-100 text-gray-400 cursor-not-allowed"
+            }`}
+          >
+            {product.inStock ? "Add to Cart" : "Unavailable"}
+          </button>
+        )}
       </div>
     </div>
   );

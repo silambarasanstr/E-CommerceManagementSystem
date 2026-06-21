@@ -11,6 +11,8 @@ import { Toaster } from "react-hot-toast";
 import Register from "./auth/Register";
 import AuthRoute from "./routes/AuthRoute";
 import ProductsDetails from "./pages/ProductsDetails";
+import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
 
 function App() {
   return (
@@ -21,9 +23,14 @@ function App() {
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
             <Route path="/category" element={<Category />} />
-            <Route path="/category/:categoryName" element={<CategoryProducts />} />
+            <Route
+              path="/category/:categoryName"
+              element={<CategoryProducts />}
+            />
             <Route path="/product" element={<Products />} />
             <Route path="/product/:id" element={<ProductsDetails />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
           </Route>
 
           <Route element={<AuthRoute />}>

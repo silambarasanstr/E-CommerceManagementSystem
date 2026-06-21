@@ -13,7 +13,6 @@ import { useSearchParams } from "react-router-dom";
 const Products = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const category = searchParams.get("category") || "";
-
   const [products, setProducts] = useState<ProductType[]>([]);
   const [categories, setCategories] = useState<CategoryType[]>([]);
   const [loading, setLoading] = useState(true);
@@ -33,12 +32,9 @@ const Products = () => {
         limit: 12,
       });
 
-      console.log("Products =>", data);
-
       setProducts(data);
-    } catch (error) {
-      setError("Error fetching products");
-      console.error(error);
+    } catch (err: any) {
+      setError(err.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -49,7 +45,6 @@ const Products = () => {
       const data = await getCategories();
       setCategories(data);
     };
-
     fetchCategories();
   }, []);
 
@@ -57,17 +52,11 @@ const Products = () => {
     fetchProducts();
   }, [category]);
 
-  if (loading) {
-    return <LoadingState />;
-  }
+  if (loading) return <LoadingState />;
+  if (error) return <ErrorState error={error} />;
+  if (products.length === 0) return <EmptyState message="No products found." />;
 
-  if (error) {
-    return <ErrorState error={error} />;
-  }
-
-  if (products.length === 0) {
-    return <EmptyState message="No products found." />;
-  }
+  
 
   return (
     <div className="max-w-screen-xl px-3 py-4 mx-auto">

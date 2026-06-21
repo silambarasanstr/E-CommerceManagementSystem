@@ -3,11 +3,15 @@ import type { CategoryType } from "../types/category";
 
 type CategoryCardProps = {
   category: CategoryType;
+  showView?: boolean;
 };
 
 const baseUrl = "http://localhost:4000";
 
-const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
+const CategoryCard: React.FC<CategoryCardProps> = ({
+  category,
+  showView = true,
+}) => {
   return (
     <Link to={`/category/${category._id}`} className="block h-full group">
       <div className="h-full overflow-hidden transition-all duration-300 bg-white border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1">
@@ -42,12 +46,14 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
             </p>
           )}
 
-          <div className="flex items-center text-sm font-medium text-blue-600">
-            View Category
-            <span className="ml-2 transition-transform duration-300 group-hover:translate-x-1">
-              →
-            </span>
-          </div>
+          {showView && (
+            <div className="flex items-center text-sm font-medium text-blue-600">
+              View Category
+              <span className="ml-2 transition-transform duration-300 group-hover:translate-x-1">
+                →
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </Link>

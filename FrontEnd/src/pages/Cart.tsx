@@ -1,25 +1,32 @@
 import { Link } from "react-router-dom";
 import Button from "../component/ui/button";
-import { ArrowLeft, Minus, Plus, Trash2, ShoppingCart } from "lucide-react";
+import {  Minus, Plus, Trash2,  } from "lucide-react"; 
 import { useNavigate } from "react-router-dom";
-
 import { useAppSelector, useAppDispatch } from "../store/hooks";
+
 import {
   updateQuantity,
   removeFromCart,
   clearCart,
   calculateTotals,
 } from "../store/slices/cartSlice";
+
 import { useCallback, useEffect } from "react";
+import CartEmpty from "../component/cart/CartEmpty";
+import PageHeader from "../component/cart/PageHeader";
 
 const baseUrl = import.meta.env.VITE_API_URL;
 
 const Cart: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { items, total, itemCount, tax, grandTotal, shipping } = useAppSelector(
-    (state) => state.cart,
-  );
+  const cartState = useAppSelector((state) => state.cart);
+  const items = cartState?.items ?? [];
+  const total = (cartState?.total ?? 0) as number;
+  const itemCount = (cartState?.itemCount ?? 0) as number;
+  const tax = (cartState?.tax ?? 0) as number;
+  const grandTotal = (cartState?.grandTotal ?? 0) as number;
+  const shipping = (cartState?.shipping ?? 0) as number;
 
   useEffect(() => {
     dispatch(calculateTotals());
@@ -30,14 +37,14 @@ const Cart: React.FC = () => {
   }, [dispatch]);
 
   const handleRemoveItem = useCallback(
-    (_id: number) => {
+    (_id: string) => {
       dispatch(removeFromCart(_id));
     },
     [dispatch],
   );
 
   const handleUpdateQuantity = useCallback(
-    (_id: number, newQuantity: number) => {
+    (_id: string, newQuantity: number) => {
       if (newQuantity >= 1) {
         dispatch(updateQuantity({ _id, quantity: newQuantity }));
       }
@@ -47,56 +54,22 @@ const Cart: React.FC = () => {
 
   // Empty cart state
   if (items.length === 0) {
-    return (
-      <div className="flex items-center justify-center min-h-screen px-4 bg-gray-50">
-        <div className="text-center">
-          <div className="flex justify-center mb-4">
-            <div className="flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full">
-              <ShoppingCart className="text-gray-400 w-9 h-9" />
-            </div>
-          </div>
-          <h2 className="mb-2 text-xl font-semibold text-gray-800">
-            Your cart is empty
-          </h2>
-          <p className="mb-6 text-sm text-gray-500">
-            Looks like you haven't added anything yet.
-          </p>
-          <Link
-            to="/"
-            className="inline-block bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium px-6 py-2.5 rounded-lg transition-colors"
-          >
-            Start Shopping
-          </Link>
-        </div>
-      </div>
-    );
+    return <CartEmpty />;
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Sticky top bar */}
-      <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
-        <div className="flex items-center justify-between max-w-5xl px-4 py-3 mx-auto">
-          <Link
-            to="/"
-            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Continue Shopping
-          </Link>
-          <span className="text-sm font-semibold tracking-wide text-gray-700 uppercase">
-            Your Cart
-          </span>
-          <span className="text-sm text-gray-400">
-            {itemCount} {itemCount === 1 ? "item" : "items"}
-          </span>
-        </div>
-      </div>
+      <PageHeader
+        title="Your Cart"
+        backText="Continue Shopping"
+        backLink="/"
+        rightText={`${itemCount} ${itemCount === 1 ? "item" : "items"}`}
+      />
 
       <div className="max-w-5xl px-4 py-8 mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6 items-start">
           {/* LEFT — Cart Items */}
-          <div className="overflow-hidden bg-white border border-gray-100 shadow-sm rounded-2xl">
+          <div className="overflow-hidden bg-white border border-gray-200 ">
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
               <h2 className="text-base font-semibold text-gray-800">
                 Cart Items
@@ -141,7 +114,9 @@ const Cart: React.FC = () => {
                       {item.name}
                     </Link>
                     <p className="text-xs text-gray-400 capitalize mt-0.5">
-                      {item.category}
+                      {typeof item.category === "object"
+                        ? item.category.name
+                        : item.category}
                     </p>
                     <p className="mt-1 text-sm font-bold text-gray-700">
                       ₹{item.price.toFixed(2)}
@@ -190,7 +165,7 @@ const Cart: React.FC = () => {
           </div>
 
           {/* RIGHT — Order Summary */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden lg:sticky lg:top-[61px]">
+          <div className="bg-white   border border-gray-200 overflow-hidden lg:sticky lg:top-[61px]">
             <div className="px-6 py-4 border-b border-gray-100">
               <h2 className="text-base font-semibold text-gray-800">
                 Order Summary
@@ -234,13 +209,10 @@ const Cart: React.FC = () => {
             <div className="px-6 pb-6">
               <Button
                 onClick={() => navigate("/checkout")}
-                className="w-full py-3 text-sm font-semibold text-white transition-colors bg-orange-500 hover:bg-orange-600 rounded-xl"
+                className="w-full py-3 text-sm font-semibold text-white transition-colors bg-orange-500 hover:bg-orange-600"
               >
                 Proceed to Checkout
               </Button>
-              <p className="mt-3 text-xs text-center text-gray-400">
-                🔒 Secure checkout · Free returns within 7 days
-              </p>
             </div>
           </div>
         </div>

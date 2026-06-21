@@ -5,6 +5,7 @@ import { clearCart } from "../store/slices/cartSlice";
 import { placeOrder } from "../store/slices/ordersSlice";
 import toast from "react-hot-toast";
 import { v4 as uuidv4 } from "uuid";
+import CheckoutEmpty from "../component/checkout/CheckoutEmpty";
 
 type ShippingDetails = {
   name: string;
@@ -61,25 +62,11 @@ const Checkout: React.FC = () => {
   const [errors, setErrors] = useState<Partial<ShippingDetails>>({});
   const [loading, setLoading] = useState(false);
 
+
+  
   if (items.length === 0) {
     return (
-      <div className="flex items-center justify-center min-h-screen px-4 bg-gray-50">
-        <div className="text-center">
-          <div className="mb-4 text-6xl">🛒</div>
-          <h2 className="mb-2 text-xl font-semibold text-gray-800">
-            Your cart is empty
-          </h2>
-          <p className="mb-6 text-gray-500">
-            Add some items before checking out.
-          </p>
-          <button
-            onClick={() => navigate("/")}
-            className="px-6 py-2.5 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors"
-          >
-            Continue Shopping
-          </button>
-        </div>
-      </div>
+     <CheckoutEmpty/>
     );
   }
 
@@ -163,7 +150,7 @@ const Checkout: React.FC = () => {
           <div className="space-y-5">
 
             {/* Delivery Address */}
-            <div className="overflow-hidden bg-white border border-gray-100 shadow-sm rounded-2xl">
+            <div className="overflow-hidden bg-white border border-gray-200">
               <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100">
                 <span className="flex items-center justify-center text-sm font-bold text-green-600 rounded-full w-7 h-7 bg-green-50">
                   1
@@ -207,7 +194,7 @@ const Checkout: React.FC = () => {
             </div>
 
             {/* Payment Method */}
-            <div className="overflow-hidden bg-white border border-gray-100 shadow-sm rounded-2xl">
+            <div className="overflow-hidden bg-white border border-gray-200">
               <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100">
                 <span className="flex items-center justify-center text-sm font-bold text-green-600 rounded-full w-7 h-7 bg-green-50">
                   2
@@ -247,7 +234,7 @@ const Checkout: React.FC = () => {
           </div>
 
           {/* RIGHT — Order Summary */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden lg:sticky lg:top-[61px]">
+          <div className="bg-white  border border-gray-200 overflow-hidden lg:sticky lg:top-[61px]">
             <div className="px-6 py-4 border-b border-gray-100">
               <h2 className="text-base font-semibold text-gray-800">Order Summary</h2>
             </div>
@@ -291,7 +278,7 @@ const Checkout: React.FC = () => {
               <button
                 onClick={handlePlaceOrder}
                 disabled={loading}
-                className="w-full py-3 flex items-center justify-center gap-2 text-sm font-semibold text-white bg-green-600 rounded-xl hover:bg-green-700 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full py-3 flex items-center justify-center gap-2 text-sm font-semibold text-white bg-green-600  hover:bg-green-700 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <>
@@ -307,9 +294,7 @@ const Checkout: React.FC = () => {
                   </>
                 )}
               </button>
-              <p className="mt-3 text-xs text-center text-gray-400">
-                🔒 Secure checkout · Free returns within 7 days
-              </p>
+            
             </div>
           </div>
 

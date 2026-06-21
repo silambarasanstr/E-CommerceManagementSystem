@@ -1,4 +1,3 @@
-
 import { Link, useNavigate } from "react-router-dom";
 import SearchInput from "../component/ui/search";
 import { ShoppingCart, Heart, Menu, User } from "lucide-react";
@@ -16,11 +15,9 @@ const Header = () => {
 
   const { itemCount } = useAppSelector((state) => state.cart);
   const { itemCount: wishlistItemCount } = useAppSelector(
-    (state) => state.wishlist
+    (state) => state.wishlist,
   );
-  const { isAuthenticated, user } = useAppSelector(
-    (state) => state.auth
-  );
+  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
 
   const handleSearchSubmit = useCallback(
     (e: React.FormEvent) => {
@@ -28,13 +25,11 @@ const Header = () => {
 
       if (!searchQuery.trim()) return;
 
-      navigate(
-        `/category?search=${encodeURIComponent(searchQuery)}`
-      );
+      navigate(`/category?search=${encodeURIComponent(searchQuery)}`);
 
       setSearchQuery("");
     },
-    [searchQuery, navigate]
+    [searchQuery, navigate],
   );
 
   const handleLogout = () => {
@@ -51,7 +46,7 @@ const Header = () => {
       <div className="container flex items-center gap-4 py-5 mx-auto bg-white max-w-7xl">
         {/* Logo */}
         <Link to="/" className="text-xl font-bold text-foreground">
-          Flip<span className="text-[#3e3e3e]">Kart</span>
+          Tech<span className="text-[#3e3e3e]">Store</span>
         </Link>
 
         {/* Search */}
@@ -72,9 +67,7 @@ const Header = () => {
             <>
               <div className="flex items-center gap-2 font-semibold">
                 <User className="w-5 h-5" />
-                <span className="text-sm">
-                  Hello, {user?.name ?? "User"}
-                </span>
+                <span className="text-sm">Hello, {user?.name ?? "User"}</span>
               </div>
 
               <button
@@ -85,10 +78,7 @@ const Header = () => {
               </button>
             </>
           ) : (
-            <Link
-              to="/login"
-              className="flex items-center gap-2 font-semibold"
-            >
+            <Link to="/login" className="flex items-center gap-2 font-semibold">
               <User className="w-4 h-4" />
               Sign In
             </Link>
@@ -106,10 +96,7 @@ const Header = () => {
           </Link>
 
           {/* Cart */}
-          <Link
-            to="/cart"
-            className="relative flex items-center"
-          >
+          <Link to="/cart" className="relative flex items-center">
             <ShoppingCart className="w-5 h-5" />
 
             {itemCount > 0 && (
@@ -149,4 +136,3 @@ const Header = () => {
 };
 
 export default Header;
-

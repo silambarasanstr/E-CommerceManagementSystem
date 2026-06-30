@@ -7,7 +7,7 @@ import productRoutes from "./routes/productRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import cartRoutes from "./routes/cartRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
-import reviewRoutes  from "./routes/reviewRoutes.js";
+import reviewRoutes from "./routes/reviewRoutes.js";
 import addressRoutes from "./routes/addressRoutes.js";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -45,6 +45,12 @@ app.use(
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
+
+// app.get("/api/orders", (req, res) => {
+//   res.json({
+//     data: [],
+//   });
+// });
 
 app.use("/api", authRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

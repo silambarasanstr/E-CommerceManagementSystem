@@ -1,7 +1,7 @@
-import type { CategoryType } from "../types/category";
+import type { CategoryType } from "../../types/category";
 import CategoryCard from "./CategoryCard";
-import PosterCard from "./home/PosterCard";
-import SectionTitle from "./home/SectionTitle";
+import PosterCard from "../home/PosterCard";
+import SectionTitle from "../home/SectionTitle";
 
 type CategorySectionProps = {
   title?: string;

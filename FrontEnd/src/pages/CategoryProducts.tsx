@@ -47,7 +47,7 @@ const CategoryProducts = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <div className="max-w-screen-xl px-4 py-6 mx-auto">
+      <div className="px-4 py-6 mx-auto max-w-7xl">
         {/* HEADER */}
         <div className="mb-4">
           <h1 className="text-2xl font-semibold text-gray-800 capitalize">
@@ -81,7 +81,7 @@ const CategoryProducts = () => {
 
               {/* CONTENT */}
               <div className="px-3 pb-3">
-                <h2 className="text-sm font-medium text-gray-800 line-clamp-2 min-h-[40px]">
+                <h2 className="text-sm font-medium text-gray-800 line-clamp-2 min-h-10">
                   {product.name}
                 </h2>
 

@@ -1,23 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import type { CartItem } from "./cartSlice";
+import type { CartItemTypes } from "../../types/cart";
 
 export type Order = {
   id: string;
-  items: CartItem[];
+  items: CartItemTypes[];
   total: number;
-  tax: number;
-  shipping: number;
   grandTotal: number;
   date: string;
   status: "pending" | "processing" | "delivered";
   paymentMethod: "cod" | "online";
   shippingDetails: {
-    name: string;
-    address: string;
+    fullName: string;
+    phone: string;
+    street: string;
     city: string;
     pincode: string;
-    phone: string;
   };
 };
 
@@ -48,7 +46,7 @@ export const ordersSlice = createSlice({
     },
     updateOrderStatus: (
       state,
-      action: PayloadAction<{ id: string; status: Order["status"] }>
+      action: PayloadAction<{ id: string; status: Order["status"] }>,
     ) => {
       const order = state.orders.find((o) => o.id === action.payload.id);
       if (order) {

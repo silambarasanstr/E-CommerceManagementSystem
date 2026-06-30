@@ -1,6 +1,7 @@
 import { ShoppingCart, Star, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Button from "../component/ui/button";
+import WishlistEmpty from "../component/wishlist/WishlistEmpty";
 
 import { useAppSelector, useAppDispatch } from "../store/hooks";
 import { removeFromWishlist } from "../store/slices/wishlistSlice";
@@ -21,123 +22,104 @@ const Wishlist = () => {
 
   // ✅ Show empty state if wishlist is empty
   if (items.length === 0) {
-    return (
-      <div className="container px-4 py-8 mx-auto">
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <h2 className="mb-4 text-3xl font-bold text-foreground">Wishlist</h2>
-          <p className="mb-6 text-muted-foreground">
-            Your wishlist is currently empty.
-          </p>
-
-          <Link
-            to="/"
-            className="text-white bg-[#3e3e3e] px-4 py-2 rounded-md mt-2"
-          >
-            Start Shopping
-          </Link>
-        </div>
-      </div>
-    );
+    return <WishlistEmpty />;
   }
 
   return (
     <div className="px-6 py-5">
-      <h2 className="mb-5 text-2xl font-semibold">My Wishlist</h2>
+      <h2 className="mb-2 text-2xl font-semibold">My Wishlist</h2>
 
       <p className="mb-2 text-muted-foreground">
         {itemCount} {itemCount === 1 ? "item" : "items"} saved
       </p>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 ">
         {items.map((item) => (
-          <div key={item._id} className="bg-white rounded-md shadow-md">
+          <div
+            key={item._id}
+            className="overflow-hidden bg-white border border-gray-300 "
+          >
+            {/* Product Image */}
             <div className="relative">
               <Link to={`/product/${item._id}`}>
                 {item?.image ? (
                   <img
-                    src={
-                      item.image.startsWith("http")
-                        ? item.image
-                        : `http://localhost:4000${item.image}`
-                    }
+                    src={item.image}
                     alt={item.name}
-                    className="object-contain w-full h-48 p-3 mb-4 border border-gray-200 "
+                    className="object-cover w-full h-40 bg-white"
                   />
                 ) : (
-                  <span>No Image</span>
+                  <div className="flex items-center justify-center h-56">
+                    No Image
+                  </div>
                 )}
               </Link>
 
+              {/* Remove Button */}
               <button
                 onClick={() => handleRemoveItem(item._id)}
-                className="absolute p-2 transition-all rounded-full shadow-md cursor-pointer top-2 right-2 bg-white/90 hover:bg-white"
+                className="absolute z-10 p-2 transition bg-white rounded-full shadow cursor-pointer top-3 right-3 hover:bg-red-50"
               >
-                <Trash2 className="w-4 h-4 text-destructive" />
+                <Trash2 className="w-4 h-4 text-red-500" />
               </button>
 
-              {/* ✅ Discount badge */}
-
-              <div className="absolute px-2 py-1 text-xs font-bold rounded-md top-2 left-2 bg-accent text-accent-foreground">
-                ₹ {item.originalPrice}
+              {/* discount Price Badge */}
+              <div className="absolute top-2 left-2 text-[11px] font-medium bg-orange-100 text-orange-800 px-2 py-0.5 rounded-full">
+                ₹{item.discount} % off
               </div>
 
-              <div
-                className={` ${
-                  item.inStock ? "hidden" : ""
-                }  absolute inset-0 bg-black/50 flex items-center justify-center`}
-              >
-                {item.inStock ? (
-                  <div className="px-2 py-1 text-xs font-bold text-white bg-green-600 rounded-md ">
-                    In Stock
-                  </div>
-                ) : (
-                  <div className="px-2 py-1 text-xs font-bold text-white bg-red-600 rounded-md ">
+              {/* Stock Status */}
+              {!item.inStock && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                  <span className="px-3 py-1 text-sm font-semibold text-white bg-red-600 rounded-md">
                     Out of Stock
-                  </div>
-                )}
-              </div>
+                  </span>
+                </div>
+              )}
             </div>
 
-            <div className="px-4 py-4">
-              <h3 className="mb-2 font-semibold text-foreground">
-                {item.name}
-              </h3>
-              <div className="flex items-center mb-2">
-                <div className="flex items-center">
-                  <span className="ml-1 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                      <div className="text-[12px] font-medium px-2 py-0.5 bg-green-600 items-center text-white rounded inline-flex  gap-1">
-                        <span>{item?.rating}</span>
-                        <Star className={`h-3 w-3 gap-2 fill-white`} />
-                      </div>
+            {/* Product Details */}
+            <div className="flex flex-col justify-between p-4">
+              <div>
+                <h3 className="mb-2 font-semibold line-clamp-1 ">
+                  {item.name}
+                </h3>
 
-                      <div className="text-[14px] font-medium text-[#878787]">
-                        {item?.reviews} Reviews
-                      </div>
-                    </div>
+                {/* Rating */}
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="inline-flex items-center gap-1 px-2 py-1 text-xs text-white bg-green-600 rounded">
+                    {item.rating}
+                    <Star className="w-3 h-3 fill-white" />
+                  </div>
+
+                  <span className="text-sm text-gray-500">
+                    {item.reviews} Reviews
+                  </span>
+                </div>
+
+                {/* Price */}
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="font-bold ">₹{item.price}</span>
+
+                  <span className="text-sm text-gray-400 line-through">
+                    ₹{item.originalPrice}
                   </span>
                 </div>
               </div>
-              <div className="flex items-center pt-2 mb-1 space-x-4">
-                <span className="text-lg font-bold text-foreground">
-                  ₹{item?.price}
-                </span>
-                <span className="text-base text-[#878787] line-through">
-                  ₹ {item?.originalPrice}
-                </span>
-              </div>
-            </div>
 
-            <div className="px-4 ">
-              <Button className="text-white bg-[#3e3e3e] flex items-center justify-center w-full py-2 rounded-md mt-2 ">
-                <ShoppingCart className="w-4 h-4 mr-2" />
+              {/* Add to Cart */}
+              <Button
+                disabled={!item.inStock}
+                className="flex items-center justify-center w-full gap-2 py-2 text-white bg-[#3e3e3e]"
+              >
+                <ShoppingCart className="w-4 h-4" />
                 Add to Cart
               </Button>
-            </div>
 
-            <p className="px-4 py-2 text-xs text-muted-foreground">
-              Added {new Date().toLocaleDateString()}
-            </p>
+              <p className="mt-3 text-xs text-gray-600">
+                Added {new Date().toLocaleDateString()}
+              </p>
+            </div>
           </div>
         ))}
       </div>

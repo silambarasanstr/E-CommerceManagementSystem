@@ -1,32 +1,7 @@
 import Product from "../models/Product.js";
 import Category from "../models/Category.js";
 
-// 🔍 Search products by name or category
-// exports.searchProduct = async (req, res) => {
-//   try {
-//     const { name, category } = req.query;
-
-//     // Build search filter
-//     let filter = {};
-
-//     if (name) {
-//       // Case-insensitive partial search
-//       filter.name = { $regex: name, $options: "i" };
-//     }
-
-//     if (category) {
-//       filter.category = { $regex: category, $options: "i" };
-//     }
-
-//     const products = await Product.find(filter);
-
-//     res.json(products);
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// };
-
-// Get all Product
+// ─── Get All Products (Advanced Filter) ───────────────────────────────────────
 
 export const getAllProducts = async (req, res) => {
   try {
@@ -43,10 +18,12 @@ export const getAllProducts = async (req, res) => {
 
     const query = {};
 
+    // ─── Search ─────────────────────────────
     if (search) {
       query.$text = { $search: search };
     }
-    
+
+    // ─── Category filter ────────────────────
     if (category) {
       const categoryDoc = await Category.findOne({
         name: { $regex: `^${category}$`, $options: "i" },
@@ -54,20 +31,35 @@ export const getAllProducts = async (req, res) => {
 
       if (categoryDoc) {
         query.category = categoryDoc._id;
+      } else {
+        return res.json({
+          success: true,
+          data: [],
+          message: "No category found",
+        });
       }
     }
 
+    // ─── Brand filter ───────────────────────
     if (brand) {
-      query.brand = { $regex: brand, $options: "i" };
+      const brands = brand
+        .split(",")
+        .map((b) => b.trim())
+        .filter((b) => b.length > 0); // 👈 empty string ah remove pannu
+
+      if (brands.length > 0) {
+        query.brand = { $in: brands };
+      }
     }
 
+    // ─── Price filter ───────────────────────
     if (minPrice || maxPrice) {
       query.price = {};
       if (minPrice) query.price.$gte = Number(minPrice);
       if (maxPrice) query.price.$lte = Number(maxPrice);
     }
 
-    // Sort options
+    // ─── Sorting ────────────────────────────
     const sortOptions = {
       newest: { createdAt: -1 },
       oldest: { createdAt: 1 },
@@ -78,26 +70,28 @@ export const getAllProducts = async (req, res) => {
 
     const sortBy = sortOptions[sort] || { createdAt: -1 };
 
-    // Pagination
-
-    // ✅ Fix: String → Number convert
+    // ─── Pagination ─────────────────────────
     const pageNum = Math.max(1, Number(page));
     const limitNum = Math.min(50, Math.max(1, Number(limit)));
     const skip = (pageNum - 1) * limitNum;
-    const [products, productsCount] = await Promise.all([
+
+    const [products, total] = await Promise.all([
       Product.find(query)
-        .populate("category") // ✅ ObjectId ref — populate correct
+        .populate("category")
         .sort(sortBy)
         .skip(skip)
         .limit(limitNum),
+
       Product.countDocuments(query),
     ]);
 
     res.status(200).json({
       success: true,
       count: products.length,
+      total,
+      page: pageNum,
+      pages: Math.ceil(total / limitNum),
       data: products,
-      pages: Math.ceil(productsCount / limitNum),
     });
   } catch (error) {
     console.error(error);
@@ -107,6 +101,8 @@ export const getAllProducts = async (req, res) => {
     });
   }
 };
+
+// ─── Get All Products (Simple) ───────────────────────────────────────────────
 
 export const getProducts = async (req, res) => {
   try {
@@ -121,27 +117,22 @@ export const getProducts = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: error.message,
     });
   }
 };
 
-// export const getAllProductCategories = async (req, res) => {
-//   // add here
-// }
-
-// Create a new Product
+// ─── Create Product ──────────────────────────────────────────────────────────
 
 export const createProduct = async (req, res) => {
   try {
     let image = "";
 
-    // File Upload
     if (req.file) {
       image = `/uploads/${req.file.filename}`;
     }
 
-    // URL
     if (req.body.image) {
       image = req.body.image;
     }
@@ -149,26 +140,44 @@ export const createProduct = async (req, res) => {
     const product = await Product.create({
       name: req.body.name,
       description: req.body.description,
-      price: req.body.price,
-      originalPrice: req.body.originalPrice,
+      price: Number(req.body.price),
+      originalPrice: Number(req.body.originalPrice),
+      discount: Number(req.body.discount || 0),
       category: req.body.category,
       image,
-      rating: req.body.rating,
-      reviews: req.body.reviews,
-      inStock: req.body.inStock,
+      brand: req.body.brand || "",
+      rating: Number(req.body.rating || 0),
+      reviews: Number(req.body.reviews || 0),
+      inStock: req.body.inStock ?? true,
+      isFeatured: req.body.isFeatured ?? false,
+      isActive: req.body.isActive ?? true,
     });
 
-    res.status(201).json(product);
+    res.status(201).json({
+      success: true,
+      data: product,
+    });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: error.message,
     });
   }
 };
 
-// Update product (with optional image)
+// ─── Update Product ──────────────────────────────────────────────────────────
+
 export const updateProduct = async (req, res) => {
   try {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
     let updateData = { ...req.body };
 
     if (req.file) {
@@ -179,25 +188,46 @@ export const updateProduct = async (req, res) => {
       updateData.image = req.body.imageUrl;
     }
 
-    const product = await Product.findByIdAndUpdate(req.params.id, updateData, {
-      new: true,
-    });
+    // ensure numeric safety
+    if (updateData.price) updateData.price = Number(updateData.price);
+    if (updateData.originalPrice)
+      updateData.originalPrice = Number(updateData.originalPrice);
+    if (updateData.discount) updateData.discount = Number(updateData.discount);
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      {
+        new: true,
+        runValidators: true,
+      },
+    ).populate("category");
 
     res.json({
       success: true,
-      data: product,
+      data: updatedProduct,
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: error.message,
     });
   }
 };
 
-// Delete a Product
+// ─── Delete Product ──────────────────────────────────────────────────────────
 
 export const deleteProduct = async (req, res) => {
   try {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
     await Product.findByIdAndDelete(req.params.id);
 
     res.json({
@@ -206,25 +236,32 @@ export const deleteProduct = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: error.message,
     });
   }
 };
 
-// Get a single Product
+// ─── Get Single Product ──────────────────────────────────────────────────────
+
 export const getProductById = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id).populate("category");
 
     if (!product) {
       return res.status(404).json({
+        success: false,
         message: "Product not found",
       });
     }
 
-    res.json(product);
+    res.json({
+      success: true,
+      data: product,
+    });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: error.message,
     });
   }

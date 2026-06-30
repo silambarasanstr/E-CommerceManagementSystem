@@ -3,8 +3,8 @@ import Add1 from "../assets/add1.webp";
 import Add2 from "../assets/add2.webp";
 import Add3 from "../assets/add3.webp";
 import Poster from "../assets/poster.webp";
-import ProductSection from "../component/ProductSection";
-import CategorySection from "../component/CategorySection";
+import ProductSection from "../component/products/ProductSection";
+import CategorySection from "../component/category/CategorySection";
 import BannerSlider from "../component/home/Banner";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 import AdvertisementSection from "../component/home/AdvertisementSection";
@@ -16,11 +16,6 @@ import EmptyState from "../component/ui/EmptyState";
 const Home: React.FC = () => {
   useDocumentTitle("Home | Ecommerce");
   const { products, categories, loading, error } = useHomeData();
-
-  // Testing only
-  // const testProducts: any[] = [];
-  // const testCategories = categories;
-
   const featuredProducts = products.filter((p) => p.isFeatured) ?? [];
   const previewProducts = featuredProducts.slice(0, 5);
   const previewCategories = categories.slice(0, 5);

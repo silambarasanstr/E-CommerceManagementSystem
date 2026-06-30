@@ -1,26 +1,50 @@
 import { Link } from "react-router-dom";
-import type { ProductType } from "../types/product";
-import WishlistButton from "./WishlistButton";
-import { addToCart } from "../store/slices/cartSlice";
-import { useAppDispatch } from "../store/hooks";
+import type { ProductType } from "../../types/product";
+import WishlistButton from "../wishlist/WishlistButton";
+import { useAppDispatch } from "../../store/hooks";
+import { memo, useState, useEffect } from "react";
+import { addToCart as addToCartAPI } from "../../services/cartService";
+import { setCart, calculateTotals } from "../../store/slices/cartSlice";
+import { getCart } from "../../services/cartService";
 
 type ProductCardProps = {
   product: ProductType;
   showAddToCart?: boolean;
 };
 
-const baseUrl = "http://localhost:4000";
+
+
+const StockBadge = memo(({ product }: { product: ProductType }) => {
+  if (!product.discount || product.discount <= 0) return null;
+
+  return (
+    <span className="absolute top-2 left-2 text-[11px] font-medium bg-orange-100 text-orange-800 px-2 py-0.5 rounded-full">
+      {product.discount}% off
+    </span>
+  );
+});
 
 const ProductCard: React.FC<ProductCardProps> = ({
   product,
   showAddToCart = true,
 }) => {
   const dispatch = useAppDispatch();
+  const [quantity, setQuantity] = useState(1);
 
-  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
+  useEffect(() => {
+    setQuantity(1);
+  }, [product._id]);
+
+  const handleAddToCart = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-
-    dispatch(addToCart({ ...product, quantity: 1 }));
+    try {
+      await addToCartAPI(product._id, quantity);
+      const response = await getCart();
+      dispatch(setCart(response.data.items));
+      dispatch(calculateTotals());
+    } catch (error) {
+      console.error("Failed to add to cart:", error);
+    }
   };
 
   return (
@@ -35,19 +59,18 @@ const ProductCard: React.FC<ProductCardProps> = ({
         to={`/product/${product._id}`}
         className="overflow-hidden rounded-t bg-gray-50 h-44"
       >
-        {product.image ? (
-          <img
-            src={
-              product.image.startsWith("http")
-                ? product.image
-                : `${baseUrl}${product.image}`
-            }
-            alt={product.name}
-            className="object-cover w-full h-full"
-          />
-        ) : (
-          <span className="text-sm text-gray-400">No Image</span>
-        )}
+        <div className="relative h-48 overflow-hidden bg-gray-100">
+          {product.image ? (
+            <img
+              src={product.image}
+              alt={product.name}
+              className="object-cover w-full h-full"
+            />
+          ) : (
+            <span className="text-sm text-gray-400">No Image</span>
+          )}
+          <StockBadge product={product} />
+        </div>
       </Link>
 
       {/* Details */}
@@ -62,7 +85,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           ₹ {product.price}
         </p>
 
-        {/* Badge */}
+        {/* Stock */}
         <span
           className={`self-start text-xs font-medium px-2 py-0.5 rounded-full ${
             product.inStock
@@ -78,10 +101,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <button
             onClick={handleAddToCart}
             disabled={!product.inStock}
-            className={`mt-2 w-full py-2  text-sm font-medium transition-colors ${
+            className={`mt-2 w-full py-2 text-sm font-medium transition-colors ${
               product.inStock
                 ? "bg-gray-900 text-white hover:bg-gray-700"
-                : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
             }`}
           >
             {product.inStock ? "Add to Cart" : "Unavailable"}

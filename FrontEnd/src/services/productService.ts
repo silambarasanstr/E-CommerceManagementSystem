@@ -1,6 +1,11 @@
 import { api } from "./api";
 import type { ProductType } from "../types/product";
 
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+}
+
 // type GetAllProductsParams = {
 //   search?: string;
 //   category?: string;
@@ -64,8 +69,13 @@ export const getAllProducts = async ({
 };
 
 export const getProductById = async (id: string) => {
-  return api<ProductType>(`/products/all/${id}`);
+  return api<ApiResponse<ProductType>>(`/products/all/${id}`);
 };
+
+// export const getProductById = async (id: string) => {
+//   const res = await api<ApiResponse<ProductType>>(`/products/all/${id}`);
+//   return res.data;
+// };
 
 export const createProduct = async (
   product: Omit<ProductType, "_id" | "createdAt" | "updatedAt">,

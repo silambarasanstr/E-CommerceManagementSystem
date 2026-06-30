@@ -8,6 +8,8 @@ import Category from "../models/Category.js";
 
 dotenv.config();
 
+// ─── Admin User ───────────────────────────────────────────────────────────────
+
 const adminUser = {
   name: "Admin",
   email: "admin@example.com",
@@ -15,225 +17,237 @@ const adminUser = {
   role: "admin",
 };
 
+// ─── Categories ───────────────────────────────────────────────────────────────
+
 const categories = [
   {
     name: "Electronics",
+    slug: "electronics",
     description: "Latest gadgets, devices and electronic accessories",
-    image: "https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400",
+    image:
+      "https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400",
   },
   {
     name: "Clothing",
+    slug: "clothing",
     description: "Trendy fashion and everyday wear for men and women",
-    image: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=400",
+    image:
+      "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=400",
   },
   {
     name: "Books",
+    slug: "books",
     description: "Best sellers, textbooks and self-help books",
-    image: "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400",
+    image:
+      "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400",
   },
   {
     name: "Home & Kitchen",
+    slug: "home-kitchen",
     description: "Everything you need for your home and kitchen",
-    image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400",
+    image:
+      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400",
   },
   {
     name: "Sports",
+    slug: "sports",
     description: "Sports equipment, activewear and fitness accessories",
-    image: "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=400",
+    image:
+      "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=400",
   },
 ];
 
+// ─── Products Generator ───────────────────────────────────────────────────────
+
 const getProducts = (categoryMap) => [
-  // Electronics
+  // ================= ELECTRONICS =================
   {
     name: "Wireless Bluetooth Headphones",
+    slug: "wireless-bluetooth-headphones",
     description:
       "Premium noise-cancelling wireless headphones with 30-hour battery life and crystal-clear sound.",
     price: 1999,
     originalPrice: 3499,
+    discount: 43,
     category: categoryMap["Electronics"],
-    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
+    image:
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
     brand: "SoundMax",
     rating: 4.5,
     reviews: 128,
     inStock: true,
     isFeatured: true,
+    isActive: true,
   },
   {
     name: "Smartphone 5G Pro",
+    slug: "smartphone-5g-pro",
     description:
       "Latest 5G smartphone with 108MP camera, 5000mAh battery and 6.7-inch AMOLED display.",
     price: 24999,
     originalPrice: 29999,
+    discount: 17,
     category: categoryMap["Electronics"],
-    image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400",
+    image:
+      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400",
     brand: "TechBrand",
     rating: 4.3,
     reviews: 256,
     inStock: true,
     isFeatured: true,
-  },
-  {
-    name: "Laptop 15.6 inch",
-    description:
-      "High-performance laptop with Intel i7, 16GB RAM, 512GB SSD and dedicated graphics.",
-    price: 54999,
-    originalPrice: 64999,
-    category: categoryMap["Electronics"],
-    image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400",
-    brand: "TechBrand",
-    rating: 4.7,
-    reviews: 89,
-    inStock: true,
-    isFeatured: false,
-  },
-  {
-    name: "Smart Watch Series 5",
-    description:
-      "Feature-packed smartwatch with health monitoring, GPS, and 7-day battery life.",
-    price: 4999,
-    originalPrice: 7999,
-    category: categoryMap["Electronics"],
-    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400",
-    brand: "TimeTech",
-    rating: 4.2,
-    reviews: 340,
-    inStock: true,
-    isFeatured: true,
+    isActive: true,
   },
 
-  // Clothing
+  // ================= CLOTHING =================
   {
     name: "Men's Casual T-Shirt",
+    slug: "mens-casual-t-shirt",
     description:
-      "100% cotton comfortable casual t-shirt available in multiple colors. Perfect for everyday wear.",
+      "100% cotton comfortable casual t-shirt available in multiple colors.",
     price: 399,
     originalPrice: 799,
+    discount: 50,
     category: categoryMap["Clothing"],
-    image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400",
+    image:
+      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400",
     brand: "FashionHub",
     rating: 4.0,
     reviews: 512,
     inStock: true,
     isFeatured: false,
+    isActive: true,
   },
   {
     name: "Women's Kurti Set",
+    slug: "womens-kurti-set",
     description:
-      "Elegant printed kurti with matching palazzo pants. Perfect for casual and semi-formal occasions.",
+      "Elegant printed kurti with matching palazzo pants for casual wear.",
     price: 899,
     originalPrice: 1499,
+    discount: 40,
     category: categoryMap["Clothing"],
-    image: "https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=400",
+    image:
+      "https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=400",
     brand: "StyleIndia",
     rating: 4.4,
     reviews: 198,
     inStock: true,
     isFeatured: true,
-  },
-  {
-    name: "Denim Jeans Slim Fit",
-    description:
-      "Stretchable slim fit jeans with premium denim fabric. Available in blue and black.",
-    price: 1299,
-    originalPrice: 2199,
-    category: categoryMap["Clothing"],
-    image: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=400",
-    brand: "DenimCo",
-    rating: 4.1,
-    reviews: 305,
-    inStock: true,
-    isFeatured: false,
+    isActive: true,
   },
 
-  // Books
-  {
-    name: "JavaScript: The Good Parts",
-    description:
-      "A classic guide to the best features of JavaScript, written by Douglas Crockford.",
-    price: 449,
-    originalPrice: 699,
-    category: categoryMap["Books"],
-    image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400",
-    brand: "O'Reilly",
-    rating: 4.8,
-    reviews: 1024,
-    inStock: true,
-    isFeatured: false,
-  },
+  // ================= BOOKS =================
   {
     name: "Atomic Habits",
+    slug: "atomic-habits",
     description:
-      "An easy and proven way to build good habits and break bad ones. Bestselling self-help book.",
+      "An easy and proven way to build good habits and break bad ones.",
     price: 349,
     originalPrice: 499,
+    discount: 30,
     category: categoryMap["Books"],
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
+    image:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
     brand: "Penguin",
     rating: 4.9,
     reviews: 2048,
     inStock: true,
     isFeatured: true,
+    isActive: true,
+  },
+  {
+    name: "JavaScript: The Good Parts",
+    slug: "javascript-the-good-parts",
+    description:
+      "Classic guide to best JavaScript features by Douglas Crockford.",
+    price: 449,
+    originalPrice: 699,
+    discount: 36,
+    category: categoryMap["Books"],
+    image:
+      "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400",
+    brand: "O'Reilly",
+    rating: 4.8,
+    reviews: 1024,
+    inStock: true,
+    isFeatured: false,
+    isActive: true,
   },
 
-  // Home & Kitchen
+  // ================= HOME & KITCHEN =================
   {
     name: "Stainless Steel Water Bottle",
+    slug: "stainless-steel-water-bottle",
     description:
-      "Double-wall insulated water bottle that keeps drinks cold for 24 hours and hot for 12 hours.",
+      "Double-wall insulated bottle keeps drinks cold 24h and hot 12h.",
     price: 599,
     originalPrice: 999,
+    discount: 40,
     category: categoryMap["Home & Kitchen"],
-    image: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=400",
+    image:
+      "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=400",
     brand: "HydroLife",
     rating: 4.6,
     reviews: 789,
     inStock: true,
     isFeatured: false,
+    isActive: true,
   },
   {
     name: "Non-Stick Cookware Set",
+    slug: "non-stick-cookware-set",
     description:
-      "5-piece premium non-stick cookware set with glass lids. Suitable for all cooktops.",
+      "5-piece premium cookware set with glass lids for all cooktops.",
     price: 2499,
     originalPrice: 3999,
+    discount: 38,
     category: categoryMap["Home & Kitchen"],
-    image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400",
+    image:
+      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400",
     brand: "KitchenPro",
     rating: 4.3,
     reviews: 156,
     inStock: true,
     isFeatured: false,
+    isActive: true,
   },
 
-  // Sports
+  // ================= SPORTS =================
   {
     name: "Yoga Mat Premium",
+    slug: "yoga-mat-premium",
     description:
-      "Extra thick 6mm non-slip yoga mat with carrying strap. Eco-friendly TPE material.",
+      "Extra thick 6mm non-slip yoga mat with eco-friendly material.",
     price: 799,
     originalPrice: 1299,
+    discount: 38,
     category: categoryMap["Sports"],
-    image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400",
+    image:
+      "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400",
     brand: "FitLife",
     rating: 4.5,
     reviews: 423,
     inStock: true,
     isFeatured: true,
+    isActive: true,
   },
   {
     name: "Running Shoes Men",
+    slug: "running-shoes-men",
     description:
-      "Lightweight breathable running shoes with cushioned sole and anti-slip grip.",
+      "Lightweight breathable running shoes with cushioned sole.",
     price: 1999,
     originalPrice: 3499,
+    discount: 43,
     category: categoryMap["Sports"],
-    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400",
+    image:
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400",
     brand: "SpeedRun",
     rating: 4.4,
     reviews: 612,
     inStock: true,
     isFeatured: true,
+    isActive: true,
   },
 ];
 
@@ -244,28 +258,23 @@ const seedDB = async () => {
     await mongoose.connect(process.env.MONGO_URI);
     console.log("Connected to MongoDB");
 
-    // Clear existing data
     await User.deleteMany({});
     await Product.deleteMany({});
     await Category.deleteMany({});
     console.log("Cleared existing data");
 
-    // Seed admin user
     const hashedPassword = await bcrypt.hash(adminUser.password, 10);
     await User.create({ ...adminUser, password: hashedPassword });
     console.log("Admin user created");
 
-    // Seed categories
     const createdCategories = await Category.insertMany(categories);
 
-    // Build a name → _id map
     const categoryMap = {};
     createdCategories.forEach((cat) => {
       categoryMap[cat.name] = cat._id;
     });
     console.log("Categories created");
 
-    // Seed products
     await Product.insertMany(getProducts(categoryMap));
     console.log("Products created");
 

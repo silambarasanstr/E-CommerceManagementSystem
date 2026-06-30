@@ -5,6 +5,7 @@ import {
   getOrderById,
   cancelOrder,
   getAllOrders,
+  deleteOrder,
   updateOrderStatus,
 } from "../controllers/orderController.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
@@ -17,9 +18,15 @@ router.post("/", authMiddleware, placeOrder);
 router.get("/", authMiddleware, getMyOrders);
 router.get("/:id", authMiddleware, getOrderById);
 router.put("/:id/cancel", authMiddleware, cancelOrder);
+router.delete("/:id", authMiddleware, deleteOrder);
 
 // Admin routes — login + admin role required
 router.get("/admin/all", authMiddleware, adminMiddleware, getAllOrders);
-router.put("/admin/:id/status", authMiddleware, adminMiddleware, updateOrderStatus);
+router.put(
+  "/admin/:id/status",
+  authMiddleware,
+  adminMiddleware,
+  updateOrderStatus,
+);
 
 export default router;

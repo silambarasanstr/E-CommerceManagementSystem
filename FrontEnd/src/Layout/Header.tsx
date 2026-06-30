@@ -1,9 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
-import SearchInput from "../component/ui/search";
 import { ShoppingCart, Heart, Menu, User } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { logout } from "../store/slices/authSlice";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import NavBar from "../component/menu/NavBar";
 
 const Header = () => {
@@ -11,26 +10,11 @@ const Header = () => {
   const dispatch = useAppDispatch();
 
   const [isOpen, setIsOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
 
-  const { itemCount } = useAppSelector((state) => state.cart);
-  const { itemCount: wishlistItemCount } = useAppSelector(
-    (state) => state.wishlist,
-  );
+  const itemCount = useAppSelector((state) => state.cart.itemCount);
+  const wishlistItemCount = useAppSelector((state) => state.wishlist.itemCount);
+
   const { isAuthenticated, user } = useAppSelector((state) => state.auth);
-
-  const handleSearchSubmit = useCallback(
-    (e: React.FormEvent) => {
-      e.preventDefault();
-
-      if (!searchQuery.trim()) return;
-
-      navigate(`/category?search=${encodeURIComponent(searchQuery)}`);
-
-      setSearchQuery("");
-    },
-    [searchQuery, navigate],
-  );
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -48,18 +32,6 @@ const Header = () => {
         <Link to="/" className="text-xl font-bold text-foreground">
           Tech<span className="text-[#3e3e3e]">Store</span>
         </Link>
-
-        {/* Search */}
-        <form
-          onSubmit={handleSearchSubmit}
-          className="hidden w-full max-w-2xl md:block"
-        >
-          <SearchInput
-            placeholder="Search for Products, Brands and More..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </form>
 
         {/* Right Side */}
         <div className="flex items-center gap-5 ml-auto">

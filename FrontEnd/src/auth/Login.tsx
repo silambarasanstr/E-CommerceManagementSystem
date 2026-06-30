@@ -41,6 +41,7 @@ const Login = () => {
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
       const data = await loginUser(formData);
+      localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
       dispatch(
@@ -51,9 +52,7 @@ const Login = () => {
         }),
       );
 
-      toast.success("Login successfully!", {
-        duration: 9000,
-      });
+      toast.success("Login successfully!");
       navigate("/");
     } catch (err) {
       console.error(err);

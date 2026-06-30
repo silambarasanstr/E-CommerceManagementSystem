@@ -1,4 +1,4 @@
-import CategoryCard from "../component/CategoryCard";
+import CategoryCard from "../component/category/CategoryCard";
 import EmptyState from "../component/ui/EmptyState";
 import ErrorState from "../component/ui/ErrorState";
 import LoadingState from "../component/ui/LoadingState";
@@ -36,7 +36,7 @@ const Category = () => {
     return <EmptyState message="No categories found." />;
 
   return (
-    <div className="max-w-screen-xl px-3 py-4 mx-auto">
+    <div className="px-3 py-4 mx-auto max-w-7xl">
       <div className="mb-6">
         <h1 className="text-3xl font-bold">Shop By Category</h1>
         <p className="mt-1 text-gray-500">

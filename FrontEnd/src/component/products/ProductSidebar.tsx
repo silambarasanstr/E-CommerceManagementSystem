@@ -1,6 +1,6 @@
-import Checkbox from "./ui/checkbox";
+import Checkbox from "../ui/checkbox";
 import { useState } from "react";
-import SectionHeader from "./ui/SectionHeader";
+import SectionHeader from "../ui/SectionHeader";
 
 type FilterSection = {
   id: string;

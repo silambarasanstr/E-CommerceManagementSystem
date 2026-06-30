@@ -14,10 +14,11 @@ interface AuthState {
 }
 
 const storedUser = localStorage.getItem("user");
+const storedToken = localStorage.getItem("token");
 
 const initialState: AuthState = {
-  isAuthenticated: !!storedUser,
-   user: storedUser ? JSON.parse(storedUser) : null,
+  isAuthenticated: !!storedToken,
+  user: storedUser ? JSON.parse(storedUser) : null,
   loading: false,
 };
 

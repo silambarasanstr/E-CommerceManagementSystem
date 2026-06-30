@@ -50,18 +50,31 @@ const NavBar = () => {
     },
   ];
 
+  const slugify = (text: string) =>
+    text
+      .toLowerCase()
+      .trim()
+      .replace(/&/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-");
+
   const categoryItems = [
     "Clothing",
     "Books",
     "Electronics",
     "Home & Kitchen",
     "Sports",
-  ].map((name, index) => ({
-    id: String(index + 1),
-    label: name,
-    href: `/category/${encodeURIComponent(name)}`,
-    img: categoryImageMap[name] || fash,
-  }));
+  ].map((name, index) => {
+    const slug = slugify(name);
+
+    return {
+      id: String(index + 1),
+      label: name,
+      slug, // 👈 new field
+      href: `/category/${slug}`,
+      img: categoryImageMap[name] || fash,
+    };
+  });
 
   // ✅ REMOVE DUPLICATES (IMPORTANT FIX)
   const mergedItems = [...staticItems, ...categoryItems];

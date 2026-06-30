@@ -14,7 +14,7 @@ export const useHomeData = () => {
     const fetchData = async () => {
       try {
         const [productData, categoryData] = await Promise.all([
-          getProducts(),
+          getProducts(), 
           getCategories(),
         ]);
 

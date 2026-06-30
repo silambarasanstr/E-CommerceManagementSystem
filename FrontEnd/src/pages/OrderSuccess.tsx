@@ -8,44 +8,44 @@ const OrderSuccess: React.FC = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigate("/orders");
+      navigate("/order");
     }, 5000); // auto redirect after 5s
     return () => clearTimeout(timer);
   }, [navigate]);
 
   return (
-    <div className="container mx-auto py-12 text-center">
+    <div className="container py-12 mx-auto text-center">
       {/* Success badge */}
-      <div className="inline-block bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-medium mb-4">
+      <div className="inline-block px-4 py-2 mb-4 text-sm font-medium text-green-700 bg-green-100 rounded-full">
         ✅ Order Placed Successfully
       </div>
 
       {/* Heading */}
-      <h1 className="text-2xl font-semibold mb-3">Thank you for your order!</h1>
+      <h1 className="mb-3 text-2xl font-semibold">Thank you for your order!</h1>
 
       {/* Order ID */}
-      <p className="text-sm text-gray-600 mb-6">
+      <p className="mb-6 text-sm text-gray-600">
         Your order ID is{" "}
         <span className="font-medium text-gray-900">{orderId}</span>
       </p>
 
       {/* Redirect note with spinner */}
-      <div className="flex justify-center items-center gap-2 text-xs text-gray-500 mb-6">
-        <Loader2 className="h-4 w-4 animate-spin text-gray-400" />
+      <div className="flex items-center justify-center gap-2 mb-6 text-xs text-gray-500">
+        <Loader2 className="w-4 h-4 text-gray-400 animate-spin" />
         Redirecting you to your orders in 5 seconds...
       </div>
 
       {/* Buttons */}
       <div className="flex justify-center gap-3">
         <Link
-          to="/orders"
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm"
+          to="/order"
+          className="px-4 py-2 text-sm text-white bg-blue-500 rounded-md hover:bg-blue-600"
         >
           View Orders
         </Link>
         <Link
           to="/"
-          className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md text-sm"
+          className="px-4 py-2 text-sm text-gray-800 bg-gray-200 rounded-md hover:bg-gray-300"
         >
           Continue Shopping
         </Link>

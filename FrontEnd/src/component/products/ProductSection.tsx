@@ -1,6 +1,6 @@
-import type { ProductType } from "../types/product";
-import PosterCard from "./home/PosterCard";
-import SectionTitle from "./home/SectionTitle";
+import type { ProductType } from "../../types/product";
+import PosterCard from "../home/PosterCard";
+import SectionTitle from "../home/SectionTitle";
 import ProductCard from "./ProductCard";
 
 type ProductSectionProps = {

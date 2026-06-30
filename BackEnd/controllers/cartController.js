@@ -4,16 +4,28 @@ import Product from "../models/Product.js";
 // GET /api/cart — Get logged-in user's cart
 export const getCart = async (req, res) => {
   try {
-    const cart = await Cart.findOne({ user: req.user.id }).populate(
-      "items.product",
-      "name image price",
-    );
+    let cart = await Cart.findOne({ user: req.user.id })
+      .populate("items.product", "name image price discount");
 
     if (!cart) {
-      return res.status(200).json({ items: [], totalAmount: 0 });
+      cart = new Cart({ user: req.user.id, items: [] });
+      await cart.save();
     }
 
-    res.status(200).json(cart);
+    // Convert to plain object and ensure all required fields
+    const cartData = cart.toObject();
+
+    cartData.items = cartData.items
+      .filter((item) => item.product)
+      .map((item) => ({
+        ...item,
+        // Ensure originalPrice is set
+        originalPrice: item.originalPrice || item.product.price,
+        // Ensure discount is set
+        discount: item.discount !== undefined ? item.discount : item.product.discount || 0,
+      }));
+
+    res.status(200).json({ data: cartData });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
@@ -43,6 +55,8 @@ export const addToCart = async (req, res) => {
       cart = new Cart({ user: req.user.id, items: [] });
     }
 
+    const discountedPrice = product.price - (product.price * product.discount) / 100;
+
     const existingItem = cart.items.find(
       (item) => item.product.toString() === productId,
     );
@@ -53,14 +67,16 @@ export const addToCart = async (req, res) => {
       cart.items.push({
         product: productId,
         quantity,
-        price: product.price,
+        price: discountedPrice,
+        originalPrice: product.price,
+        discount: product.discount,
       });
     }
 
     cart.calcTotal();
     await cart.save();
 
-    res.status(200).json({ message: "Item added to cart", cart });
+    res.status(200).json({ message: "Item added to cart", data: cart });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
@@ -93,7 +109,7 @@ export const updateCartItem = async (req, res) => {
     cart.calcTotal();
     await cart.save();
 
-    res.status(200).json({ message: "Cart updated", cart });
+    res.status(200).json({ message: "Cart updated", data: cart });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
@@ -121,7 +137,7 @@ export const removeCartItem = async (req, res) => {
     cart.calcTotal();
     await cart.save();
 
-    res.status(200).json({ message: "Item removed from cart", cart });
+    res.status(200).json({ message: "Item removed from cart", data: cart });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
@@ -141,7 +157,7 @@ export const clearCart = async (req, res) => {
     cart.totalAmount = 0;
     await cart.save();
 
-    res.status(200).json({ message: "Cart cleared" });
+    res.status(200).json({ message: "Cart cleared", data: cart });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });

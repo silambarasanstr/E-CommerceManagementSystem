@@ -1,14 +1,16 @@
 import Order from "../models/Order.js";
 import Cart from "../models/Cart.js";
 
-// POST /api/orders — Place a new order
+/* ─────────────────────────────────────────────
+   PLACE ORDER
+──────────────────────────────────────────── */
 export const placeOrder = async (req, res) => {
   const { shippingAddress, paymentMethod } = req.body;
 
   if (!shippingAddress || !paymentMethod) {
-    return res
-      .status(400)
-      .json({ message: "Shipping address and payment method are required" });
+    return res.status(400).json({
+      message: "Shipping address and payment method are required",
+    });
   }
 
   try {
@@ -21,40 +23,61 @@ export const placeOrder = async (req, res) => {
       return res.status(400).json({ message: "Cart is empty" });
     }
 
+    // Convert cart items → order items
     const orderItems = cart.items.map((item) => ({
-      product: item.product._id,
+      productId: item.product._id,
       name: item.product.name,
       image: item.product.image,
-      price: item.price,
+      price: item.product.price,
       quantity: item.quantity,
     }));
 
+    // Calculate subtotal
+    const subtotal = orderItems.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+
+    const discount = 0; // you can add coupon logic later
+    const shippingFee = 0;
+
+    const totalAmount = subtotal - discount + shippingFee;
+
+    // Create order
     const order = await Order.create({
       user: req.user.id,
       items: orderItems,
       shippingAddress,
       paymentMethod,
-      totalAmount: cart.totalAmount,
+      subtotal,
+      discount,
+      shippingFee,
+      totalAmount,
     });
 
-    // Clear cart after placing order
+    // Clear cart
     cart.items = [];
     cart.totalAmount = 0;
     await cart.save();
 
-    res.status(201).json({ message: "Order placed successfully", order });
+    res.status(201).json({
+      message: "Order placed successfully",
+      order,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-// GET /api/orders — Get my orders
+/* ─────────────────────────────────────────────
+   GET MY ORDERS
+──────────────────────────────────────────── */
 export const getMyOrders = async (req, res) => {
   try {
-    const orders = await Order.find({ user: req.user.id })
-      .sort({ createdAt: -1 })
-      .populate("items.product", "name image");
+    const orders = await Order.find({ user: req.user.id }).sort({
+      createdAt: -1,
+    });
 
     res.status(200).json(orders);
   } catch (err) {
@@ -63,19 +86,17 @@ export const getMyOrders = async (req, res) => {
   }
 };
 
-// GET /api/orders/:id — Get single order details
+/* ─────────────────────────────────────────────
+   GET ORDER BY ID
+──────────────────────────────────────────── */
 export const getOrderById = async (req, res) => {
   try {
-    const order = await Order.findById(req.params.id).populate(
-      "items.product",
-      "name image"
-    );
+    const order = await Order.findById(req.params.id);
 
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    // Users can only see their own orders
     if (order.user.toString() !== req.user.id) {
       return res.status(403).json({ message: "Not authorized" });
     }
@@ -87,7 +108,9 @@ export const getOrderById = async (req, res) => {
   }
 };
 
-// PUT /api/orders/:id/cancel — Cancel an order
+/* ─────────────────────────────────────────────
+   CANCEL ORDER (USER)
+──────────────────────────────────────────── */
 export const cancelOrder = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
@@ -102,33 +125,43 @@ export const cancelOrder = async (req, res) => {
 
     if (order.orderStatus === "Shipped" || order.orderStatus === "Delivered") {
       return res.status(400).json({
-        message: `Cannot cancel an order that is already ${order.orderStatus}`,
+        message: `Cannot cancel ${order.orderStatus} order`,
       });
     }
 
     if (order.orderStatus === "Cancelled") {
-      return res.status(400).json({ message: "Order is already cancelled" });
+      return res.status(400).json({
+        message: "Order already cancelled",
+      });
+    }
+
+    if (order.paymentStatus === "Paid") {
+      return res.status(400).json({
+        message: "Paid order cannot be cancelled",
+      });
     }
 
     order.orderStatus = "Cancelled";
     await order.save();
 
-    res.status(200).json({ message: "Order cancelled successfully", order });
+    res.status(200).json({
+      message: "Order cancelled successfully",
+      order,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-// ─── Admin Controllers ───────────────────────────────────────────────────────
-
-// GET /api/admin/orders — Get all orders (Admin)
+/* ─────────────────────────────────────────────
+   ADMIN: GET ALL ORDERS
+──────────────────────────────────────────── */
 export const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find()
-      .sort({ createdAt: -1 })
       .populate("user", "name email")
-      .populate("items.product", "name image");
+      .sort({ createdAt: -1 });
 
     res.status(200).json(orders);
   } catch (err) {
@@ -137,20 +170,20 @@ export const getAllOrders = async (req, res) => {
   }
 };
 
-// PUT /api/admin/orders/:id/status — Update order status (Admin)
+/* ─────────────────────────────────────────────
+   ADMIN: UPDATE ORDER STATUS
+──────────────────────────────────────────── */
 export const updateOrderStatus = async (req, res) => {
   const { orderStatus, paymentStatus } = req.body;
 
-  const validOrderStatuses = ["Processing", "Shipped", "Delivered", "Cancelled"];
+  const validOrderStatuses = [
+    "Processing",
+    "Shipped",
+    "Delivered",
+    "Cancelled",
+  ];
+
   const validPaymentStatuses = ["Pending", "Paid", "Failed"];
-
-  if (orderStatus && !validOrderStatuses.includes(orderStatus)) {
-    return res.status(400).json({ message: "Invalid order status" });
-  }
-
-  if (paymentStatus && !validPaymentStatuses.includes(paymentStatus)) {
-    return res.status(400).json({ message: "Invalid payment status" });
-  }
 
   try {
     const order = await Order.findById(req.params.id);
@@ -159,16 +192,46 @@ export const updateOrderStatus = async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    if (orderStatus) order.orderStatus = orderStatus;
-    if (paymentStatus) order.paymentStatus = paymentStatus;
+    if (orderStatus && validOrderStatuses.includes(orderStatus)) {
+      order.orderStatus = orderStatus;
 
-    if (orderStatus === "Delivered") {
-      order.deliveredAt = new Date();
+      if (orderStatus === "Delivered") {
+        order.deliveredAt = new Date();
+      }
+    }
+
+    if (paymentStatus && validPaymentStatuses.includes(paymentStatus)) {
+      order.paymentStatus = paymentStatus;
     }
 
     await order.save();
 
-    res.status(200).json({ message: "Order status updated", order });
+    res.status(200).json({
+      message: "Order updated successfully",
+      order,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+/* ─────────────────────────────────────────────
+   ADMIN: DELETE ORDER
+──────────────────────────────────────────── */
+export const deleteOrder = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    await Order.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({
+      message: "Order deleted successfully",
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });

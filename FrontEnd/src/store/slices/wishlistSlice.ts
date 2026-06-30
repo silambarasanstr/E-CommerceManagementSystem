@@ -1,16 +1,25 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import type { CategoryType } from "../../types/category";
 
 export type WishlistItem = {
-  _id: string;
+  _id: string; // ✅ required
   name: string;
-  price: number;
+  slug?: string;
+  description?: string;
+  price?: number;
   originalPrice?: number;
-  image?: string;
-  category?: string;
+  discount?: number;
+  image: string;
+  category?: CategoryType;
+  brand?: string;
   rating?: number;
   reviews?: number;
   inStock?: boolean;
+  isFeatured?: boolean;
+  isActive?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
   dateAdded: string;
 };
 
@@ -36,8 +45,10 @@ const wishlistSlice = createSlice({
   initialState,
   reducers: {
     // ✅ Add item to wishlist
-    addToWhislist: (state, action: PayloadAction<WishlistItem>) => {
-      const exists = state.items.find((item) => item._id === action.payload._id);
+    addToWishlist: (state, action: PayloadAction<WishlistItem>) => {
+      const exists = state.items.find(
+        (item) => item._id === action.payload._id,
+      );
       if (!exists) {
         state.items.push(action.payload);
         state.itemCount = state.items.length;
@@ -61,6 +72,6 @@ const wishlistSlice = createSlice({
   },
 });
 
-export const { addToWhislist, removeFromWishlist, clearWishlist } =
+export const { addToWishlist, removeFromWishlist, clearWishlist } =
   wishlistSlice.actions;
 export default wishlistSlice.reducer;

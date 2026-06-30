@@ -16,6 +16,14 @@ const cartItemSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  originalPrice: {
+    type: Number,
+    required: true,
+  },
+  discount: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const cartSchema = new mongoose.Schema(
@@ -32,13 +40,13 @@ const cartSchema = new mongoose.Schema(
       default: 0,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 cartSchema.methods.calcTotal = function () {
   this.totalAmount = this.items.reduce(
     (sum, item) => sum + item.price * item.quantity,
-    0
+    0,
   );
 };
 

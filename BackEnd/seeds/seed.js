@@ -1,3 +1,4 @@
+import dns from "dns";
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
@@ -5,6 +6,8 @@ import dotenv from "dotenv";
 import User from "../models/User.js";
 import Product from "../models/Product.js";
 import Category from "../models/Category.js";
+
+dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 dotenv.config();
 

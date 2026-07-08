@@ -1,13 +1,6 @@
 import React from "react";
 import type { CartItemTypes } from "../../types/cart";
 
-type ItemType = {
-  _id: string;
-  name: string;
-  price: number;
-  quantity: number;
-};
-
 type OrderSummaryProps = {
   items: CartItemTypes[];
 

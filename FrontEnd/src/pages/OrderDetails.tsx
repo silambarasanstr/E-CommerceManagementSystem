@@ -6,7 +6,7 @@ const OrderDetails: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>();
 
   const order = useAppSelector((state) =>
-    state.orders.orders.find((o) => o.id === orderId)
+    state.orders.orders.find((o) => o.id === orderId),
   );
 
   const getStatusStyle = (status: string) => {
@@ -65,9 +65,7 @@ const OrderDetails: React.FC = () => {
               Order ID
             </p>
 
-            <p className="font-mono font-semibold text-gray-900">
-              #{order.id}
-            </p>
+            <p className="font-mono font-semibold text-gray-900">#{order.id}</p>
           </div>
 
           <div>
@@ -87,7 +85,7 @@ const OrderDetails: React.FC = () => {
 
             <span
               className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${getStatusStyle(
-                order.status
+                order.status,
               )}`}
             >
               {order.status.toUpperCase()}
@@ -103,13 +101,12 @@ const OrderDetails: React.FC = () => {
         </h2>
 
         <div className="space-y-1 text-sm text-gray-700">
-          <p className="font-medium">{order.shippingDetails.name}</p>
+          <p className="font-medium">{order.shippingDetails.fullName}</p>
 
-          <p>{order.shippingDetails.address}</p>
+          <p>{order.shippingDetails.street}</p>
 
           <p>
-            {order.shippingDetails.city} -{" "}
-            {order.shippingDetails.pincode}
+            {order.shippingDetails.city} - {order.shippingDetails.pincode}
           </p>
 
           <p>Phone: {order.shippingDetails.phone}</p>
@@ -129,8 +126,6 @@ const OrderDetails: React.FC = () => {
               className="flex items-center justify-between p-4 transition border border-gray-200 rounded-lg hover:bg-gray-50"
             >
               <div>
-                <h3 className="font-medium text-gray-900">{item.name}</h3>
-
                 <p className="text-sm text-gray-500">
                   Quantity: {item.quantity}
                 </p>

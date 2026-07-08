@@ -21,6 +21,7 @@ const Checkout: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { items, grandTotal } = useAppSelector((state) => state.cart);
+
   const [shippingDetails, setShippingDetails] = useState<ShippingTypes>({
     fullName: "",
     street: "",
@@ -78,7 +79,7 @@ const Checkout: React.FC = () => {
 
       toast.success("Order placed successfully!");
 
-      navigate(`/order-success`);
+      navigate(`/order-success/`);
     } catch (error) {
       toast.error("Something went wrong. Please try again.");
       console.error(error);
@@ -90,6 +91,8 @@ const Checkout: React.FC = () => {
   if (items.length === 0) {
     return <CheckoutEmpty />;
   }
+
+  
 
   return (
     <div className="min-h-screen bg-gray-50">

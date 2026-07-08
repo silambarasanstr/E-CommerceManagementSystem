@@ -31,7 +31,14 @@ const Products = () => {
   const [maxPrice, setMaxPrice] = useState(MAX);
   const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
   const [selectedDiscounts, setSelectedDiscounts] = useState<number[]>([]);
+  
+  const [selectedAvailability, setSelectedAvailability] = useState<
+    boolean | null
+  >(null);
+
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
+  const [brands, setBrands] = useState<string[]>([]);
+  const [showAllBrands, setShowAllBrands] = useState(false);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -60,7 +67,8 @@ const Products = () => {
             category,
             minPrice,
             maxPrice,
-            brand: selectedBrands.length > 0 ? selectedBrands.join(",") : undefined,
+            brand:
+              selectedBrands.length > 0 ? selectedBrands.join(",") : undefined,
             limit: 12,
           });
 
@@ -77,6 +85,19 @@ const Products = () => {
               selectedDiscounts.some(
                 (discount) => (product.discount ?? 0) >= discount,
               ),
+            );
+          }
+
+          if (selectedBrands.length === 0) {
+            const uniqueBrands = [
+              ...new Set(data.map((product) => product.brand)),
+            ];
+            setBrands(uniqueBrands);
+          }
+
+          if (selectedAvailability !== null) {
+            filteredProducts = filteredProducts.filter(
+              (product) => product.inStock === selectedAvailability,
             );
           }
 
@@ -99,6 +120,7 @@ const Products = () => {
     selectedRatings,
     selectedDiscounts,
     selectedBrands,
+    selectedAvailability,
   ]);
 
   const handleMinChange = (value: number) => {
@@ -122,7 +144,9 @@ const Products = () => {
     }
   };
 
-  const brands = [...new Set(products.map((product) => product.brand))];
+  const filteredBrands = brands.filter((b) => b);
+
+  const visibleBrands = brands.slice(0, 5);
 
   if (loading) return <LoadingState />;
   if (error) return <ErrorState error={error} />;
@@ -130,8 +154,8 @@ const Products = () => {
   return (
     <div className="px-3 py-4 mx-auto max-w-7xl">
       <div className="flex gap-4">
-        <aside className="w-64 bg-white border border-gray-200">
-          <div className="px-3 py-3 bg-blue-600">
+        <aside className="w-64 bg-white border border-gray-200 rounded">
+          <div className="px-3 py-3 bg-blue-600 rounded-t">
             <h2 className="font-semibold text-[15px] text-white">Filters</h2>
           </div>
 
@@ -233,7 +257,16 @@ const Products = () => {
                 <Checkbox
                   key={rating}
                   id={`rating-${rating}`}
-                  label={`${rating} ★ & above`}
+                  label={
+                    <span className="flex items-center gap-1.5">
+                      <span className="inline-flex items-center gap-0.5 text-[11px] font-semibold bg-green-600 text-white px-1.5 py-0.5 rounded">
+                        {rating} ★
+                      </span>
+                      <span className="text-gray-600 text-[13px]">
+                        &amp; above
+                      </span>
+                    </span>
+                  }
                   checked={selectedRatings.includes(rating)}
                   onChange={() => {
                     if (selectedRatings.includes(rating)) {
@@ -277,7 +310,7 @@ const Products = () => {
             <div className="mb-3 font-medium">BRAND</div>
 
             <div className="space-y-2">
-              {brands.map((brand) => (
+              {visibleBrands.map((brand) => (
                 <Checkbox
                   key={brand}
                   id={brand}
@@ -294,6 +327,45 @@ const Products = () => {
                   }}
                 />
               ))}
+            </div>
+
+            <div>
+              {!showAllBrands && filteredBrands.length > 5 && (
+                <button
+                  onClick={() => setShowAllBrands(true)}
+                  className="mt-2 text-[12px] text-[#2874f0] font-medium hover:underline"
+                >
+                  + {filteredBrands.length - 5} More
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="p-4 text-sm border-b border-gray-100">
+            <div className="mb-3 font-medium">Availability</div>
+
+            <div className="space-y-2">
+              {/* In Stock */}
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="availability"
+                  checked={selectedAvailability === true}
+                  onChange={() => setSelectedAvailability(true)}
+                />
+                <span>In Stock</span>
+              </label>
+
+              {/* Exclude Out of Stock */}
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="availability"
+                  checked={selectedAvailability === false}
+                  onChange={() => setSelectedAvailability(false)}
+                />
+                <span>Exclude Out of Stock</span>
+              </label>
             </div>
           </div>
         </aside>

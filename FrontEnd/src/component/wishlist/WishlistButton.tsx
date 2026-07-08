@@ -1,5 +1,4 @@
 import React, { useMemo } from "react";
-import type { CategoryType } from "../../types/category";
 import { Heart } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {

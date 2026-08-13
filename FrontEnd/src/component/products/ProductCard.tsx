@@ -48,7 +48,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   };
 
   return (
-    <div className="relative flex flex-col overflow-hidden transition-shadow duration-200 bg-white border border-gray-100 shadow-sm hover:shadow-md">
+    <div className="relative flex flex-col overflow-hidden transition-shadow duration-200 bg-white border border-gray-300 shadow-sm rounded-2xl hover:shadow-md">
       {/* Wishlist */}
       <div className="absolute z-10 top-3 right-3">
         <WishlistButton product={product} />

@@ -1,34 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import type { CartItemTypes } from "../../types/cart";
-
-export type Order = {
-  id: string;
-  items: CartItemTypes[];
-  total: number;
-  grandTotal: number;
-  date: string;
-  status: "pending" | "processing" | "delivered";
-  paymentMethod: "cod" | "online";
-  shippingDetails: {
-    fullName: string;
-    phone: string;
-    street: string;
-    city: string;
-    pincode: string;
-  };
-};
+import type { OrderType } from "../../types/order";
 
 type OrdersState = {
-  orders: Order[];
+  orders: OrderType[];
 };
 
-const loadOrders = (): Order[] => {
+const loadOrders = (): OrderType[] => {
   const data = localStorage.getItem("orders");
   return data ? JSON.parse(data) : [];
 };
 
-const saveOrders = (orders: Order[]) => {
+const saveOrders = (orders: OrderType[]) => {
   localStorage.setItem("orders", JSON.stringify(orders));
 };
 
@@ -38,22 +21,37 @@ const initialState: OrdersState = {
 
 export const ordersSlice = createSlice({
   name: "orders",
+
   initialState,
+
   reducers: {
-    placeOrder: (state, action: PayloadAction<Order>) => {
+    setOrders: (state, action: PayloadAction<OrderType[]>) => {
+      state.orders = action.payload;
+      saveOrders(state.orders);
+    },
+
+    placeOrder: (state, action: PayloadAction<OrderType>) => {
       state.orders.push(action.payload);
       saveOrders(state.orders);
     },
+
     updateOrderStatus: (
       state,
-      action: PayloadAction<{ id: string; status: Order["status"] }>,
+      action: PayloadAction<{
+        _id: string;
+        orderStatus: OrderType["orderStatus"];
+      }>,
     ) => {
-      const order = state.orders.find((o) => o.id === action.payload.id);
+      const order = state.orders.find(
+        (order) => order._id === action.payload._id,
+      );
+
       if (order) {
-        order.status = action.payload.status;
+        order.orderStatus = action.payload.orderStatus;
         saveOrders(state.orders);
       }
     },
+
     clearOrders: (state) => {
       state.orders = [];
       localStorage.removeItem("orders");
@@ -61,6 +59,11 @@ export const ordersSlice = createSlice({
   },
 });
 
-export const { placeOrder, updateOrderStatus, clearOrders } =
-  ordersSlice.actions;
+export const {
+  setOrders,
+  placeOrder,
+  updateOrderStatus,
+  clearOrders,
+} = ordersSlice.actions;
+
 export default ordersSlice.reducer;

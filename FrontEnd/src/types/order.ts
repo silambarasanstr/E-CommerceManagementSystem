@@ -1,14 +1,29 @@
-import type { ShippingTypes } from "./shipping";
 import type { CartItemTypes } from "./cart";
 import type { PaymentMethodType } from "./payment";
 
 export type OrderType = {
-  id: string;
+  _id: string;
+  user: string;
+
   items: CartItemTypes[];
-  total: number;
-  grandTotal: number;
-  date: string;
-  status: "pending" | "processing" | "delivered";
-  shippingDetails: ShippingTypes;
+
+  shippingAddress: {
+    fullName: string;
+    phone: string;
+    street: string;
+    city: string;
+    pincode: string;
+  };
+
   paymentMethod: PaymentMethodType;
+  paymentStatus: string;
+  orderStatus: string;
+
+  subtotal: number;
+  discount: number;
+  shippingFee: number;
+  totalAmount: number;
+
+  createdAt: string;
+  updatedAt: string;
 };

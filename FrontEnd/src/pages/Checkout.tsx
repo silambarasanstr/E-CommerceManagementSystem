@@ -73,16 +73,15 @@ const Checkout: React.FC = () => {
         paymentMethod,
       });
 
-      console.log(response);
-
       dispatch(clearCart());
 
       toast.success("Order placed successfully!");
 
-      navigate(`/order-success/`);
+      navigate(`/order-success/${response.order._id}`);
     } catch (error) {
+      console.error("Failed to place order:", error);
+
       toast.error("Something went wrong. Please try again.");
-      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -91,8 +90,6 @@ const Checkout: React.FC = () => {
   if (items.length === 0) {
     return <CheckoutEmpty />;
   }
-
-  
 
   return (
     <div className="min-h-screen bg-gray-50">

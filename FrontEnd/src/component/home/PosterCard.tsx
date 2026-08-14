@@ -14,7 +14,7 @@ const PosterCard = ({
 
   return (
     <div className="justify-center hidden md:flex">
-      <img src={poster} alt={alt} className={className} />
+      <img src={poster} alt={alt} className={className} loading="lazy" />
     </div>
   );
 };

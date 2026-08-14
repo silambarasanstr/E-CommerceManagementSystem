@@ -24,9 +24,7 @@ const ProductDetails: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
 
-  const isAlreadyInCart = cartItems.some(
-    (item) => item._id === product?._id,
-  );
+  const isAlreadyInCart = cartItems.some((item) => item._id === product?._id);
 
   const fetchProduct = useCallback(async () => {
     if (!id) {
@@ -63,8 +61,7 @@ const ProductDetails: React.FC = () => {
   const discount =
     product?.originalPrice && product?.price
       ? Math.round(
-          ((product.originalPrice - product.price) /
-            product.originalPrice) *
+          ((product.originalPrice - product.price) / product.originalPrice) *
             100,
         )
       : product?.discount || 0;
@@ -72,13 +69,17 @@ const ProductDetails: React.FC = () => {
   const handleAddToCart = async () => {
     if (!product || !product.inStock) return;
 
+    const token = localStorage.getItem("token");
+
+    // User is not logged in
+    if (!token) {
+      navigate("/register");
+      return;
+    }
+
     try {
-      // 1. API call (source of truth)
       await addToCartAPI(product._id, quantity);
-
-      // 2. sync cart from backend
       const response = await getCart();
-
       dispatch(setCart(response.data.items));
       dispatch(calculateTotals());
     } catch (error) {

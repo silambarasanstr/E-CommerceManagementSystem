@@ -65,6 +65,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               src={product.image}
               alt={product.name}
               className="object-cover w-full h-full"
+              loading="lazy"
             />
           ) : (
             <span className="text-sm text-gray-400">No Image</span>

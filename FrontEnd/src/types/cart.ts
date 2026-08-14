@@ -1,5 +1,6 @@
 export type CartItemTypes = {
   _id: string;
+  name: string;
   quantity: number;
   price: number;
   originalPrice?: number;

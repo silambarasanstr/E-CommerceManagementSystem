@@ -26,6 +26,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
               }
               alt={category.name}
               className="object-cover w-full h-full"
+              loading="lazy"
             />
           ) : (
             <div className="flex items-center justify-center w-full h-full text-gray-400">

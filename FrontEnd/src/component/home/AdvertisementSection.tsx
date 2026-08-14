@@ -14,6 +14,7 @@ const AdvertisementSection = ({ ads }: AdvertisementSectionProps) => {
             src={ad}
             alt={`advertisement ${idx + 1}`}
             className="object-cover w-full h-48 transition-transform duration-300 group-hover:scale-105"
+            loading="lazy"
           />
         </div>
       ))}

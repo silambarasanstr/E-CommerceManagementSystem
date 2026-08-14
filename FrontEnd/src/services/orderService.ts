@@ -1,8 +1,13 @@
 import { api } from "./api";
 import type { OrderType } from "../types/order";
 
-export const getMyOrders = async () => {
-  return api<{ data: OrderType[] }>("/orders");
+type CreateOrderResponse = {
+  message: string;
+  order: OrderType;
+};
+
+export const getMyOrders = async (): Promise<OrderType[]> => {
+  return api<OrderType[]>("/orders");
 };
 
 export const createOrder = async (orderData: {
@@ -15,7 +20,7 @@ export const createOrder = async (orderData: {
   };
   paymentMethod: string;
 }) => {
-  return api("/orders", {
+  return api<CreateOrderResponse>("/orders", {
     method: "POST",
     body: JSON.stringify(orderData),
   });

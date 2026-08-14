@@ -25,7 +25,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
                   : `${baseUrl}${category.image}`
               }
               alt={category.name}
-              className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+              className="object-cover w-full h-full"
             />
           ) : (
             <div className="flex items-center justify-center w-full h-full text-gray-400">

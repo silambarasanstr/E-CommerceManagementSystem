@@ -31,7 +31,7 @@ const Products = () => {
   const [maxPrice, setMaxPrice] = useState(MAX);
   const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
   const [selectedDiscounts, setSelectedDiscounts] = useState<number[]>([]);
-  
+
   const [selectedAvailability, setSelectedAvailability] = useState<
     boolean | null
   >(null);
@@ -39,17 +39,21 @@ const Products = () => {
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [brands, setBrands] = useState<string[]>([]);
   const [showAllBrands, setShowAllBrands] = useState(false);
-
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchCategories = async () => {
+      setCategoriesLoading(true);
+
       try {
         const data = await getCategories();
         setCategories(data);
       } catch (err) {
         console.error("Failed to load categories", err);
+      } finally {
+        setCategoriesLoading(false);
       }
     };
     fetchCategories();
@@ -148,9 +152,6 @@ const Products = () => {
 
   const visibleBrands = brands.slice(0, 5);
 
-  if (loading) return <LoadingState />;
-  if (error) return <ErrorState error={error} />;
-
   return (
     <div className="px-3 py-4 mx-auto max-w-7xl">
       <div className="flex gap-4">
@@ -162,15 +163,23 @@ const Products = () => {
           <div className="p-4 text-sm border-b border-gray-100">
             <div className="mb-3 font-medium">CATEGORY</div>
             <div className="pb-3 space-y-0.5">
-              {categories.map((cat) => (
-                <Checkbox
-                  key={cat._id}
-                  id={cat._id}
-                  label={cat.name}
-                  checked={category === cat.name}
-                  onChange={() => handleCategoryToggle(cat.name)}
-                />
-              ))}
+              {categoriesLoading ? (
+                <div className="space-y-2">
+                  <div className="w-32 h-4 bg-gray-200 rounded animate-pulse" />
+                  <div className="w-24 h-4 bg-gray-200 rounded animate-pulse" />
+                  <div className="w-28 h-4 bg-gray-200 rounded animate-pulse" />
+                </div>
+              ) : (
+                categories.map((cat) => (
+                  <Checkbox
+                    key={cat._id}
+                    id={cat._id}
+                    label={cat.name}
+                    checked={category === cat.name}
+                    onChange={() => handleCategoryToggle(cat.name)}
+                  />
+                ))
+              )}
             </div>
           </div>
 
@@ -310,23 +319,33 @@ const Products = () => {
             <div className="mb-3 font-medium">BRAND</div>
 
             <div className="space-y-2">
-              {visibleBrands.map((brand) => (
-                <Checkbox
-                  key={brand}
-                  id={brand}
-                  label={brand}
-                  checked={selectedBrands.includes(brand)}
-                  onChange={() => {
-                    if (selectedBrands.includes(brand)) {
-                      setSelectedBrands(
-                        selectedBrands.filter((b) => b !== brand),
-                      );
-                    } else {
-                      setSelectedBrands([...selectedBrands, brand]);
-                    }
-                  }}
-                />
-              ))}
+              {loading ? (
+                <>
+                  <div className="w-24 h-4 bg-gray-200 rounded animate-pulse" />
+                  <div className="w-32 h-4 bg-gray-200 rounded animate-pulse" />
+                  <div className="w-20 h-4 bg-gray-200 rounded animate-pulse" />
+                  <div className="w-28 h-4 bg-gray-200 rounded animate-pulse" />
+                  <div className="w-24 h-4 bg-gray-200 rounded animate-pulse" />
+                </>
+              ) : (
+                visibleBrands.map((brand) => (
+                  <Checkbox
+                    key={brand}
+                    id={brand}
+                    label={brand}
+                    checked={selectedBrands.includes(brand)}
+                    onChange={() => {
+                      if (selectedBrands.includes(brand)) {
+                        setSelectedBrands(
+                          selectedBrands.filter((b) => b !== brand),
+                        );
+                      } else {
+                        setSelectedBrands([...selectedBrands, brand]);
+                      }
+                    }}
+                  />
+                ))
+              )}
             </div>
 
             <div>
@@ -371,7 +390,11 @@ const Products = () => {
         </aside>
 
         <main className="flex-1 min-w-0">
-          {products.length === 0 ? (
+          {loading ? (
+            <LoadingState />
+          ) : error ? (
+            <ErrorState error={error} />
+          ) : products.length === 0 ? (
             <EmptyState message="No products found." />
           ) : (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">

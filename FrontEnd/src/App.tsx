@@ -24,6 +24,7 @@ import Wishlist from "./pages/Wishlist";
 import { useEffect } from "react";
 import { useAppDispatch } from "./store/hooks";
 import { loadCartFromAPI } from "./store/slices/cartSlice";
+import Profile from "./pages/Profile";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -55,6 +56,7 @@ function App() {
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
             <Route element={<Layout />}>
+              <Route path="/profile" element={<Profile />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route
                 path="/order-success/:orderId"
